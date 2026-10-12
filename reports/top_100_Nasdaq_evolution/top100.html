@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>百强更替</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Oswald:wght@500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one dark column of five chapters (换人 / 换重心 / 换位 / 强者愈强 / 自己探索); each chapter = headline, one sentence, one live widget. */
+:root{
+  color-scheme:dark;
+  --bg:#0d1117; --panel:#151c26; --tile:#1b2330; --line:#263040; --fg:#eef2f6; --fg2:#a3adba; --fg3:#6f7a88;
+  --up:#4c8dff; --down:#ff8a3d; --new:#4c8dff; --gold:#ffd166;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-num:"Oswald","Arial Narrow",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.65}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:48px 72px}
+header.hero{padding-block:24px 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:13px;letter-spacing:.12em;color:var(--fg3);text-transform:uppercase;margin:0 0 10px}
+h1{font-size:clamp(32px,5.6vw,60px);line-height:1.12;margin:0;font-weight:900;text-wrap:balance}
+h1 em{font-style:normal;color:var(--down)}
+.lede{color:var(--fg2);font-size:18px;max-width:62ch;margin:16px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:32px}
+@media (max-width:720px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat b{display:block;font-family:var(--f-num);font-size:clamp(36px,6vw,56px);line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.stat span{font-size:14px;color:var(--fg2)}
+section.ch{padding-block:56px 8px}
+.ch h2{font-size:clamp(26px,3.8vw,40px);line-height:1.2;margin:0 0 8px;font-weight:900;text-wrap:balance}
+.ch .num{font-family:var(--f-num);font-size:15px;color:var(--fg3);letter-spacing:.1em;margin:0 0 6px}
+.ch p.d{color:var(--fg2);max-width:66ch;margin:0 0 20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+button,.chip{font:inherit;font-size:14px;cursor:pointer;border:1px solid var(--line);background:var(--tile);color:var(--fg);border-radius:999px;padding:6px 14px}
+button:hover{border-color:var(--fg3)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--up);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.yrs button{font-family:var(--f-mono)}
+input[type=search]{font:inherit;font-family:var(--f-mono);font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--tile);color:var(--fg);width:160px}
+.big{font-family:var(--f-num);font-weight:700;font-size:28px;line-height:1}
+.muted{color:var(--fg3);font-size:13px}
+/* grid widget */
+.gw{position:relative}
+.gw .c{position:absolute;left:0;top:0;display:flex;align-items:center;justify-content:center;border-radius:6px;background:var(--tile);color:#dfe5ec;font-family:var(--f-mono);font-weight:700;font-size:13px;transition:transform .9s cubic-bezier(.6,.05,.25,1),opacity .6s,background-color .4s,color .4s}
+.lists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+@media (max-width:720px){.lists{grid-template-columns:minmax(0,1fr)}}
+.lists h3{font-size:15px;margin:0 0 8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:var(--f-mono);font-size:13px;padding:2px 8px;border-radius:5px;background:var(--tile)}
+.tag em{font-style:normal;color:var(--fg3);margin-left:5px;font-size:12px}
+.tag.o{box-shadow:inset 3px 0 0 var(--down)}.tag.n{box-shadow:inset 3px 0 0 var(--up)}
+/* treemap */
+.tm{position:relative;width:100%;height:min(62vw,560px);min-height:300px}
+.tm .b{position:absolute;border:1px solid var(--bg);overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-weight:700;color:#0d1117;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--fg2);margin-top:12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.shares{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;margin-top:16px}
+.shares th,.shares td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.shares th:first-child,.shares td:first-child{text-align:left}
+.shares th{color:var(--fg3);font-weight:500}
+.scroll{overflow-x:auto}
+/* charts */
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--f-body)}
+.ax{fill:var(--fg3);font-size:12px}
+.g{fill:none;stroke:var(--line);stroke-width:1.2}
+.hit{fill:none;stroke:transparent;stroke-width:9;cursor:pointer}
+.hl{fill:none;stroke-width:3.2;stroke-linejoin:round;stroke-linecap:round}
+/* board */
+.board{position:relative}
+.board .slot{position:absolute;border:1px dashed var(--line);border-radius:4px;font-family:var(--f-mono);font-size:9px;color:var(--fg3);padding:1px 3px}
+.board .t{position:absolute;left:0;top:0;border-radius:4px;background:var(--tile);display:flex;flex-direction:column;justify-content:center;padding:0 5px;overflow:hidden;cursor:pointer;transition:transform .9s cubic-bezier(.6,.05,.25,1),opacity .6s,background-color .6s}
+.board .t .r{font-family:var(--f-mono);font-size:9px;opacity:.75;line-height:1}
+.board .t .k{font-family:var(--f-mono);font-weight:700;font-size:12px;line-height:1.3;white-space:nowrap}
+.board .t[data-d="up"]{background:color-mix(in oklab,var(--up) var(--mix),var(--tile))}
+.board .t[data-d="down"]{background:color-mix(in oklab,var(--down) var(--mix),var(--tile))}
+.board .t[data-d="new"]{background:var(--up);color:#0b1220}
+.board .t.out{opacity:0;pointer-events:none}
+.board .t.sel{outline:2px solid var(--fg);outline-offset:1px;z-index:3}
+.board .t.dim{opacity:.25}
+.bmain{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px}
+@media (max-width:860px){.bmain{grid-template-columns:minmax(0,1fr)}}
+.ledger{display:grid;gap:14px;align-content:start}
+.ledger h3{font-size:13px;color:var(--fg2);margin:0 0 6px}
+#tip{position:fixed;pointer-events:none;background:#eef2f6;color:#0d1117;padding:8px 10px;border-radius:6px;font-size:12px;z-index:20;max-width:270px;line-height:1.5;box-shadow:0 6px 24px rgba(0,0,0,.4)}
+#tip b{font-family:var(--f-mono)}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--fg3);max-width:80ch}
+footer a{color:var(--fg2)}
+@media (prefers-reduced-motion:reduce){.gw .c,.board .t{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <p class="eyebrow">标普500 · 市值前100 · 2021 → 2026</p>
+  <h1>不到五年，美股前100换掉了 <em>27</em> 家</h1>
+  <p class="lede">每年最后一个交易日按总市值排名，2026 年取 10 月 9 日收盘，只计当时的标普500成分股。下面五段，从“谁走了谁来了”，到“钱流向哪里”，再到你可以自己翻看的排名板。</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<section class="ch" id="ch1">
+  <p class="num">01 · 换人</p>
+  <h2>四分之一的位置，换了人</h2>
+  <p class="d">2021 年底的前100，橙色的 27 家到 2026 年已经不在榜上；蓝色是取而代之的 27 家新面孔。</p>
+  <div class="panel">
+    <div class="bar"><span class="big" id="gy">2021</span><span style="flex:1"></span><button type="button" id="greplay">↻ 重播</button></div>
+    <div class="gw" id="gw"></div>
+    <div class="lists">
+      <div><h3 style="color:var(--down)">跌出 27 家 <span class="muted">（2021 年名次）</span></h3><div class="tags" id="lout"></div></div>
+      <div><h3 style="color:var(--up)">新进 27 家 <span class="muted">（2026 年名次）</span></h3><div class="tags" id="lin"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="ch2">
+  <p class="num">02 · 换重心</p>
+  <h2>钱流向了哪里</h2>
+  <p class="d">每个方块是一家公司，面积等于市值，颜色是行业。总面积按当年前100合计市值缩放。点年份切换，悬停查看公司。</p>
+  <div class="panel">
+    <div class="bar"><div class="yrs" id="tmy" style="display:flex;gap:6px;flex-wrap:wrap"></div><button type="button" id="tmplay">▶ 依次播放</button><span style="flex:1"></span><span class="muted" id="tmtot"></span></div>
+    <div class="tm" id="tm"></div>
+    <div class="legend" id="lg"></div>
+    <div class="scroll"><table class="shares" id="shares"></table></div>
+  </div>
+</section>
+
+<section class="ch" id="ch3">
+  <p class="num">03 · 换位</p>
+  <h2>排名不是单行道</h2>
+  <p class="d">灰线是所有进过前100的公司，1 在最上方，掉到底部虚线表示跌出前100。点故事线或搜索代码高亮，悬停看历年名次。</p>
+  <div class="panel">
+    <div class="bar" id="stories"></div>
+    <div class="bar"><input type="search" id="bq" placeholder="搜索代码，如 AMD" aria-label="搜索股票代码"><span class="muted" id="bhint"></span></div>
+    <div class="scroll"><svg id="bump" role="img" aria-label="前100名公司历年排名轨迹" style="min-width:720px"></svg></div>
+  </div>
+</section>
+
+<section class="ch" id="ch4">
+  <p class="num">04 · 强者愈强</p>
+  <h2>前10家，比后面90家加起来还大</h2>
+  <p class="d">前10大公司占前100合计市值的比例。2022 年熊市一度回落，之后一路走高到一半以上。</p>
+  <div class="panel"><svg id="conc" role="img" aria-label="前10大公司市值占比"></svg></div>
+</section>
+
+<section class="ch" id="ch5">
+  <p class="num">05 · 自己探索</p>
+  <h2>排名板：逐年播放</h2>
+  <p class="d">每格一家公司，按当年名次排列。蓝色名次上升，橙色下降，实心蓝为新进前100，跌出者淡出。点格子或搜索锁定一家公司。</p>
+  <div class="panel">
+    <div class="bar"><button type="button" id="bplay">▶ 播放</button><div class="yrs" id="byrs" style="display:flex;gap:6px;flex-wrap:wrap"></div><span style="flex:1"></span><input type="search" id="bsq" placeholder="搜索代码" aria-label="在排名板中搜索代码"></div>
+    <div class="bmain"><div style="min-width:0"><div class="bar" style="margin-bottom:8px"><span class="big" id="bybig">2021</span><span class="muted" id="bydate"></span></div><div class="board" id="board"></div></div><aside class="ledger" id="ledger"></aside></div>
+  </div>
+</section>
+
+<footer>
+  <p><b>数据与方法。</b>2021–2025 年末市值来自 stockanalysis.com 各公司市值历史（年末值），2026-10-09 市值来自 companiesmarketcap.com；非美国注册的成分股（如 LIN、ACN、ETN、STX）单独查询。成分股资格按 <a href="https://github.com/fja05680/sp500" target="_blank" rel="noopener">fja05680/sp500</a> 历史成分表，ticker 改名已合并（FB→META、ANTM→ELV）。按公司总市值排名，Alphabet 两类股份合并为一家，IBKR 用公司总市值；这不是标普指数使用的自由流通市值。候选名单约 180 家，门槛附近可能有个别遗漏。行业为简化分组：“消费”含可选与必需消费（含亚马逊、特斯拉），“其他”含公用事业、房地产、材料。</p>
+  <p>仅供信息参考，不构成投资建议。</p>
+  <p><a href="../">← 全部报告</a></p>
+</footer>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const P={"data":{"2021":[["AAPL",2910.0],["MSFT",2530.0],["GOOGL",1920.0],["AMZN",1690.0],["TSLA",1060.0],["META",935.64],["NVDA",735.86],["BRK.B",669.11],["UNH",472.94],["JPM",467.97],["V",456.88],["JNJ",450.36],["HD",433.37],["WMT",401.35],["PG",395.86],["BAC",364.11],["MA",353.05],["PFE",331.44],["DIS",281.54],["AVGO",274.73],["ACN",273.12],["ADBE",269.81],["CSCO",267.27],["NFLX",266.85],["LLY",264.23],["NKE",263.81],["TMO",262.92],["XOM",259.05],["KO",255.75],["COST",251.74],["CRM",250.32],["ABT",248.87],["PEP",240.18],["ABBV",239.37],["DHR",235.1],["ORCL",232.89],["CMCSA",229.95],["CVX",226.21],["PYPL",221.57],["VZ",215.12],["INTC",209.45],["QCOM",204.81],["MCD",200.31],["MRK",193.59],["WFC",191.31],["UPS",186.29],["NEE",183.19],["INTU",182.14],["LIN",177.56],["MS",176.14],["T",175.67],["LOW",174.15],["TXN",174.06],["AMD",173.78],["UNP",161.96],["SCHW",159.0],["PM",147.9],["TMUS",144.87],["HON",143.54],["AMAT",139.82],["MDT",139.09],["BLK",139.09],["BMY",138.39],["SBUX",137.23],["CVS",136.18],["EL",133.25],["AMT",133.21],["NOW",129.17],["RTX",128.81],["ISRG",128.36],["GS",128.08],["AXP",126.72],["AMGN",126.72],["PLD",124.47],["IBM",119.87],["C",119.83],["BA",118.32],["CHTR",116.89],["ZTS",115.46],["SPGI",113.74],["ELV",112.51],["CAT",111.83],["TGT",110.89],["DE",105.41],["MU",104.2],["ADP",103.9],["GE",103.74],["MRNA",102.98],["MMM",102.36],["LRCX",101.26],["SYK",100.88],["BKNG",98.52],["LMT",98.02],["COP",95.2],["MDLZ",92.5],["SHW",92.34],["ADI",92.34],["GILD",91.08],["TJX",90.56],["CCI",90.22]],"2022":[["AAPL",2070.0],["MSFT",1790.0],["GOOGL",1140.0],["AMZN",856.94],["BRK.B",680.8],["UNH",495.37],["JNJ",461.85],["XOM",454.25],["V",429.27],["JPM",393.34],["TSLA",388.97],["WMT",382.38],["NVDA",359.5],["PG",359.15],["LLY",347.61],["CVX",347.07],["MA",334.33],["HD",321.92],["META",319.09],["PFE",287.63],["ABBV",285.8],["MRK",281.3],["KO",275.08],["BAC",265.7],["PEP",248.9],["AVGO",233.65],["ORCL",220.39],["TMO",215.98],["COST",202.56],["CSCO",195.71],["DHR",193.22],["MCD",193.02],["ABT",191.43],["NKE",183.07],["ACN",175.82],["TMUS",174.18],["NEE",166.13],["VZ",165.47],["LIN",161.26],["DIS",158.43],["WFC",157.34],["PM",156.9],["ADBE",156.45],["SCHW",155.42],["BMY",152.98],["CMCSA",151.19],["UPS",150.36],["TXN",149.95],["RTX",148.36],["COP",147.04],["HON",144.08],["MS",143.69],["AMGN",140.14],["CRM",132.59],["NFLX",131.23],["T",131.21],["DE",127.87],["LMT",127.5],["IBM",127.38],["UNP",127.31],["CAT",124.67],["QCOM",123.24],["ELV",122.51],["CVS",122.45],["LOW",120.48],["GS",116.28],["SBUX",113.86],["BA",113.53],["AXP",110.4],["INTU",109.34],["SPGI",109.12],["INTC",109.08],["GILD",107.68],["BLK",106.43],["AMD",104.43],["PLD",104.06],["MDT",103.38],["CI",101.3],["ADP",99.09],["AMT",98.64],["ISRG",93.77],["SYK",92.52],["TJX",91.98],["CB",91.56],["GE",91.55],["MDLZ",91.02],["EL",88.53],["C",87.6],["NOC",83.98],["ADI",83.54],["AMAT",82.2],["MMC",82.08],["MO",81.92],["PYPL",81.19],["DUK",79.31],["REGN",78.57],["NOW",78.43],["BKNG",78.17],["SO",77.74],["EOG",76.08]],"2023":[["AAPL",2990.0],["MSFT",2790.0],["GOOGL",1750.0],["AMZN",1570.0],["NVDA",1220.0],["META",909.63],["TSLA",789.9],["BRK.B",776.39],["LLY",553.37],["V",525.22],["AVGO",522.56],["JPM",491.76],["UNH",486.95],["WMT",424.43],["MA",399.97],["XOM",396.21],["JNJ",377.32],["PG",345.38],["HD",344.91],["COST",292.9],["ORCL",289.82],["CVX",281.58],["MRK",276.26],["ABBV",273.61],["ADBE",271.63],["BAC",266.46],["KO",254.78],["CRM",254.72],["AMD",238.14],["ACN",234.0],["PEP",233.51],["MCD",215.07],["NFLX",213.1],["INTC",211.85],["CSCO",205.29],["TMO",205.08],["LIN",199.15],["ABT",191.09],["TMUS",185.42],["WFC",178.75],["CMCSA",176.5],["INTU",174.97],["DHR",170.94],["DIS",165.26],["NKE",165.23],["PFE",162.56],["QCOM",160.97],["VZ",158.49],["BA",157.69],["TXN",154.81],["AMGN",154.14],["MS",153.05],["BX",152.2],["CAT",150.52],["UNP",149.73],["IBM",149.34],["PM",146.05],["NOW",144.83],["SPGI",139.56],["GE",138.91],["HON",138.25],["COP",137.82],["AXP",136.52],["AMAT",134.69],["UPS",133.95],["LOW",127.99],["UBER",126.7],["GS",125.8],["SCHW",125.39],["NEE",124.62],["BKNG",123.76],["PLD",123.17],["RTX",120.99],["BLK",120.77],["T",119.98],["ISRG",118.77],["SYK",113.76],["LMT",112.45],["DE",112.07],["ELV",110.8],["MDT",109.54],["SBUX",109.13],["TJX",106.91],["VRTX",104.85],["BMY",104.4],["LRCX",103.23],["CVS",101.61],["GILD",100.94],["AMT",100.64],["MDLZ",98.57],["ADI",98.54],["C",98.45],["ETN",96.16],["ADP",95.82],["REGN",95.69],["MU",94.21],["MMC",93.42],["PGR",93.19],["PANW",92.98],["CB",92.21]],"2024":[["AAPL",3790.0],["NVDA",3290.0],["MSFT",3130.0],["GOOGL",2320.0],["AMZN",2310.0],["META",1480.0],["TSLA",1300.0],["AVGO",1090.0],["BRK.B",978.31],["LLY",732.87],["WMT",725.82],["JPM",674.87],["V",597.57],["MA",483.3],["XOM",472.78],["ORCL",466.08],["UNH",465.54],["COST",406.73],["PG",394.82],["HD",386.41],["NFLX",381.0],["JNJ",348.19],["BAC",337.22],["CRM",319.95],["ABBV",314.02],["KO",268.2],["CVX",260.29],["TMUS",256.15],["MRK",251.65],["ACN",237.52],["CSCO",235.78],["WFC",233.86],["NOW",218.38],["AXP",209.07],["PEP",208.62],["MCD",207.74],["BX",204.05],["IBM",203.26],["MS",202.54],["DIS",201.65],["LIN",199.35],["TMO",198.99],["ABT",196.18],["AMD",196.02],["ADBE",195.66],["PM",187.12],["ISRG",185.91],["GE",180.52],["GS",179.75],["INTU",176.0],["CAT",175.14],["PLTR",172.29],["TXN",171.05],["QCOM",170.67],["VZ",168.34],["DHR",165.8],["BKNG",164.44],["T",163.38],["BLK",158.77],["SPGI",154.39],["RTX",154.03],["PFE",150.35],["NEE",147.42],["HON",146.88],["CMCSA",143.61],["PGR",140.37],["AMGN",140.1],["LOW",139.36],["ANET",139.24],["UNP",138.25],["SYK",137.26],["TJX",135.81],["SCHW",135.48],["C",133.13],["BA",132.43],["AMAT",132.33],["BSX",131.64],["KKR",131.38],["ETN",131.16],["UBER",127.02],["PANW",119.4],["ADP",119.27],["FI",116.87],["LMT",115.18],["GILD",115.12],["DE",115.07],["BMY",114.71],["COP",114.14],["NKE",112.63],["CB",111.38],["UPS",107.61],["ADI",105.44],["MMC",104.32],["VRTX",103.71],["SBUX",103.46],["MDT",102.43],["PLD",97.9],["MU",93.77],["APO",93.45],["LRCX",92.94]],"2025":[["NVDA",4530.0],["AAPL",4020.0],["GOOGL",3780.0],["MSFT",3590.0],["AMZN",2470.0],["META",1660.0],["AVGO",1640.0],["TSLA",1500.0],["BRK.B",1080.0],["LLY",1020.0],["WMT",887.96],["JPM",877.17],["V",648.49],["ORCL",560.0],["MA",512.65],["XOM",507.49],["JNJ",498.6],["PLTR",423.66],["ABBV",403.83],["BAC",401.64],["NFLX",397.29],["COST",382.77],["AMD",348.66],["HD",342.56],["PG",334.88],["GE",324.91],["MU",321.23],["CVX",306.88],["CSCO",304.35],["KO",300.73],["UNH",299.03],["WFC",292.56],["MS",282.15],["IBM",276.88],["CAT",268.09],["GS",263.64],["MRK",261.26],["AXP",254.84],["PM",249.68],["CRM",248.22],["RTX",245.9],["APP",227.72],["TMUS",227.1],["ABT",217.86],["TMO",217.7],["MCD",217.66],["LRCX",215.01],["C",208.79],["AMAT",203.78],["DIS",203.11],["ISRG",200.77],["LIN",199.1],["PEP",196.24],["BX",185.15],["INTU",184.42],["QCOM",183.19],["SCHW",177.53],["GEV",177.33],["ACN",177.28],["AMGN",176.25],["T",176.1],["INTC",176.01],["BKNG",172.62],["VZ",171.74],["TJX",170.58],["UBER",169.78],["NEE",167.19],["BLK",166.06],["APH",165.42],["BA",165.03],["ANET",165.0],["DHR",161.7],["KLAC",159.65],["NOW",159.32],["SPGI",157.82],["TXN",157.64],["COF",154.08],["GILD",152.28],["ADBE",146.51],["PFE",141.57],["BSX",141.35],["UNP",137.21],["LOW",135.28],["SYK",134.41],["PGR",133.53],["ADI",132.79],["PANW",128.39],["WELL",127.39],["DE",125.91],["HON",123.86],["ETN",123.71],["MDT",123.15],["CB",122.84],["PLD",118.58],["CRWD",118.17],["COP",115.68],["VRTX",115.03],["KKR",113.63],["IBKR",112.46],["LMT",111.92]],"2026":[["NVDA",5536.0],["AAPL",4912.0],["GOOGL",4254.0],["MSFT",3973.0],["AMZN",2830.0],["META",1830.0],["AVGO",1725.0],["TSLA",1511.0],["MU",1162.0],["BRK.B",1103.0],["LLY",1051.0],["AMD",992.7],["JPM",885.14],["WMT",883.42],["V",723.62],["XOM",694.66],["JNJ",630.04],["INTC",553.45],["MA",516.09],["PLTR",502.35],["ABBV",488.55],["CSCO",466.76],["ORCL",428.65],["COST",419.6],["CVX",415.82],["AMAT",402.37],["LRCX",399.0],["BAC",379.84],["KO",378.83],["DELL",372.62],["CAT",367.95],["MRK",359.22],["PG",351.52],["PANW",342.56],["UNH",340.45],["GE",319.77],["PM",313.57],["MS",298.43],["NFLX",292.72],["HD",290.06],["CRWD",281.62],["ANET",273.35],["GEV",267.59],["GS",260.69],["TXN",259.12],["KLAC",255.22],["WFC",252.65],["RTX",250.64],["MRVL",247.39],["TMO",243.3],["SNDK",228.61],["AMGN",224.29],["LIN",222.98],["C",217.46],["APH",215.13],["IBM",213.98],["AXP",208.11],["ADI",196.82],["CRM",188.57],["GILD",187.44],["QCOM",187.4],["DIS",186.56],["STX",178.04],["BLK",175.86],["ABT",173.48],["VZ",173.04],["PEP",171.66],["DE",167.41],["SCHW",167.22],["ETN",166.88],["MCD",166.45],["UNP",165.35],["WELL",162.46],["NEE",161.38],["PFE",161.18],["COP",161.09],["TMUS",159.37],["DHR",154.52],["TJX",153.28],["T",151.98],["BA",150.35],["ISRG",149.77],["IBKR",149.71],["WDC",148.71],["UBER",146.06],["NOW",145.62],["FTNT",142.89],["BX",136.61],["GLW",134.68],["MPC",132.83],["CB",132.7],["VRTX",129.2],["ACN",127.93],["PGR",126.19],["PLD",125.87],["VLO",124.88],["BKNG",124.24],["NEM",124.16],["COF",122.24],["PH",121.39]]},"sec":{"ADI":"T","COST":"D","BLK":"F","ISRG":"H","APP":"T","GOOGL":"C","AMAT":"T","UBER":"I","PLTR":"T","INTU":"T","AMT":"O","AMZN":"D","MSFT":"T","MS":"F","SCHW":"F","MRNA":"H","KKR":"F","CMCSA":"C","DIS":"C","COF":"F","XOM":"E","CSCO":"T","EL":"D","TMO":"H","JPM":"F","TSLA":"D","ELV":"H","GLW":"T","ABT":"H","SNDK":"T","MCD":"D","MRK":"H","TXN":"T","ZTS":"H","CCI":"O","ORCL":"T","ETN":"I","VRTX":"H","CI":"H","ADBE":"T","CVS":"H","GEV":"I","RTX":"I","CRWD":"T","GE":"I","WMT":"D","PEP":"D","NFLX":"C","LMT":"I","NVDA":"T","DHR":"H","DUK":"O","BRK.B":"F","MO":"D","AMD":"T","T":"C","COP":"E","MA":"F","AAPL":"T","QCOM":"T","UNP":"I","WDC":"T","CAT":"I","MMM":"I","APO":"F","APH":"T","NKE":"D","LOW":"D","NEE":"O","INTC":"T","GILD":"H","PYPL":"F","IBM":"T","SHW":"O","WFC":"F","EOG":"E","CRM":"T","TJX":"D","UNH":"H","BMY":"H","PG":"D","CHTR":"C","CVX":"E","TGT":"D","ADP":"I","HD":"D","MU":"T","SYK":"H","ANET":"T","HON":"I","IBKR":"F","SBUX":"D","MDLZ":"D","LIN":"O","BKNG":"D","PGR":"F","MRVL":"T","AMGN":"H","SO":"O","NOC":"I","KO":"D","BX":"F","REGN":"H","V":"F","PANW":"T","ACN":"T","VLO":"E","MMC":"F","VZ":"C","BAC":"F","FI":"F","LRCX":"T","UPS":"I","SPGI":"F","KLAC":"T","ABBV":"H","AXP":"F","TMUS":"C","PFE":"H","FTNT":"T","GS":"F","MDT":"H","BSX":"H","AVGO":"T","PM":"D","STX":"T","MPC":"E","CB":"F","LLY":"H","META":"C","PLD":"O","DELL":"T","C":"F","DE":"I","NEM":"O","WELL":"O","JNJ":"H","NOW":"T","PH":"I","BA":"I"}};
+const Y=['2021','2022','2023','2024','2025','2026'];
+const YL={'2026':'2026·10/9'};
+const DATE={'2021':'2021-12-31 收盘','2022':'2022-12-30 收盘','2023':'2023-12-29 收盘','2024':'2024-12-31 收盘','2025':'2025-12-31 收盘','2026':'2026-10-09 收盘'};
+const SG={T:['科技','#3987e5'],D:['消费','#c98500'],C:['通信','#9085e9'],F:['金融','#199e70'],H:['医疗','#d95926'],I:['工业','#4caf50'],E:['能源','#d55181'],O:['其他','#7b8594']};
+const ORD='TDCFHIEO'.split('');
+const D={},M={},R={};Y.forEach(y=>{D[y]=P.data[y].map(r=>r[0]);M[y]={};R[y]={};P.data[y].forEach((r,i)=>{M[y][r[0]]=r[1];R[y][r[0]]=i+1})});
+const SEC=P.sec, ALL=[...new Set(Y.flatMap(y=>D[y]))];
+const $=s=>document.querySelector(s);
+const fmt=v=>v>=1000?(v/1000).toFixed(2)+' 万亿':Math.round(v)+' 亿'.replace(' 亿','0 亿');
+const fmtB=v=>v>=1000?'$'+(v/1000).toFixed(2)+'T':'$'+Math.round(v)+'B';
+const tot=y=>D[y].reduce((s,t)=>s+M[y][t],0);
+const A0=D['2021'],A1=D['2026'],sA0=new Set(A0),sA1=new Set(A1);
+const OUTS=A0.filter(t=>!sA1.has(t)),INS=A1.filter(t=>!sA0.has(t)),KEEP=ALL.filter(t=>Y.every(y=>R[y][t]));
+const share=(y,k)=>D[y].filter(t=>SEC[t]===k).reduce((s,t)=>s+M[y][t],0)/tot(y)*100;
+$('#stats').innerHTML=[[OUTS.length,'家 2021 年的前100已跌出'],[KEEP.length,'家 六年全部在榜'],[share('2026','T').toFixed(0)+'%','科技占前100市值（2021 年 '+share('2021','T').toFixed(0)+'%）'],[(tot('2026')/tot('2021')).toFixed(1)+'×','前100合计市值，30.2→54.4 万亿美元']].map(([n,s])=>`<div class="stat"><b>${n}</b><span>${s}</span></div>`).join('');
+
+/* tooltip */
+const tip=$('#tip');
+function hist(t){return Y.map(y=>`${YL[y]||y}　${R[y][t]?('#'+R[y][t]).padEnd(5,' ')+' '+fmtB(M[y][t]):'不在前100'}`).join('<br>')}
+function tipOn(t,e){tip.innerHTML=`<b>${t}</b> · ${SG[SEC[t]]?SG[SEC[t]][0]:''}<br>${hist(t)}`;tip.hidden=false;tipMove(e)}
+function tipMove(e){tip.style.left=Math.min(e.clientX+14,innerWidth-280)+'px';tip.style.top=Math.min(e.clientY+14,innerHeight-160)+'px'}
+const tipOff=()=>tip.hidden=true;
+const onView=(el,f,again)=>{let on=false;new IntersectionObserver(es=>{const v=es[0].isIntersecting;if(v&&!on){on=true;f()}else if(!v)on=false&&again}, {threshold:.35}).observe(el)};
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ch1 grid */
+(function(){
+const w=$('#gw'),gy=$('#gy'),all=[...A0,...INS],E={};let C=10,cw,ch,G=6,tm=[];
+all.forEach(t=>{const e=document.createElement('div');e.className='c';e.textContent=t;e.addEventListener('pointerenter',ev=>tipOn(t,ev));e.addEventListener('pointermove',tipMove);e.addEventListener('pointerleave',tipOff);w.appendChild(e);E[t]=e});
+const pos=r=>{const i=r-1;return[(i%C)*(cw+G),Math.floor(i/C)*(ch+G)]};
+const tr=(e,x,y,s,r)=>e.style.transform=`translate(${x}px,${y}px) scale(${s||1}) rotate(${r||0}deg)`;
+function size(){const W=w.clientWidth;C=W<560?5:10;cw=(W-G*(C-1))/C;ch=W<560?30:38;w.style.height=(Math.ceil(100/C)*(ch+G)-G)+'px';all.forEach(t=>{E[t].style.width=cw+'px';E[t].style.height=ch+'px';E[t].style.fontSize=(cw<70?11:13)+'px'})}
+function state(final){tm.forEach(clearTimeout);tm=[];size();gy.textContent=final?'2026':'2021';
+all.forEach(t=>{const e=E[t];e.style.transition='none';e.style.transitionDelay='0s';
+if(final){if(sA1.has(t)){const[x,y]=pos(R['2026'][t]);tr(e,x,y);e.style.opacity=1;e.style.background=sA0.has(t)?'':'var(--up)';e.style.color=sA0.has(t)?'':'#0b1220'}else{const[x,y]=pos(R['2021'][t]);tr(e,x,y+120,.7);e.style.opacity=0}}
+else{e.style.background='';e.style.color='';if(sA0.has(t)){const[x,y]=pos(R['2021'][t]);tr(e,x,y);e.style.opacity=1}else{const[x,y]=pos(R['2026'][t]);tr(e,x,y,.4);e.style.opacity=0}}});
+void w.offsetWidth;all.forEach(t=>E[t].style.transition='')}
+const at=(s,f)=>tm.push(setTimeout(f,s*1000));
+function play(){if(RM){state(true);return}state(false);
+at(.8,()=>OUTS.forEach(t=>{E[t].style.background='var(--down)';E[t].style.color='#10141a'}));
+at(2.2,()=>OUTS.forEach((t,i)=>{const e=E[t],[x,y]=pos(R['2021'][t]);e.style.transitionDelay=(i*.03)+'s';tr(e,x+(Math.random()-.5)*50,y+160,.7,(Math.random()-.5)*40);e.style.opacity=0}));
+at(3.4,()=>{gy.textContent='2026';A0.filter(t=>sA1.has(t)).forEach(t=>{const e=E[t],[x,y]=pos(R['2026'][t]);e.style.transitionDelay='0s';tr(e,x,y)})});
+at(4.5,()=>INS.forEach((t,i)=>{const e=E[t],[x,y]=pos(R['2026'][t]);e.style.transitionDelay=(i*.04)+'s';e.style.background='var(--up)';e.style.color='#0b1220';tr(e,x,y,1);e.style.opacity=1}))}
+state(false);onView(w,play);$('#greplay').onclick=play;
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>state(gy.textContent==='2026'),150)});
+$('#lout').innerHTML=OUTS.map(t=>`<span class="tag o">${t}<em>#${R['2021'][t]}</em></span>`).join('');
+$('#lin').innerHTML=INS.map(t=>`<span class="tag n">${t}<em>#${R['2026'][t]}</em></span>`).join('');
+})();
+
+/* ch2 treemap */
+(function(){
+const box=$('#tm'),E={};let cur='2021',RS={},raf=0;
+function lay(items,x,y,w,h){const out=[];const T=items.reduce((s,a)=>s+a.v,0);if(!T||w<=0||h<=0)return out;const sc=w*h/T;const rest=items.map(a=>({...a,a:a.v*sc}));
+while(rest.length){const sh=Math.min(w,h);let row=[],best=Infinity;while(rest.length){const r=[...row,rest[0]],s=r.reduce((p,q)=>p+q.a,0),mx=Math.max(...r.map(q=>q.a)),mn=Math.min(...r.map(q=>q.a)),wo=Math.max(sh*sh*mx/(s*s),s*s/(sh*sh*mn));if(!row.length||wo<=best){row=r;best=wo;rest.shift()}else break}
+const s=row.reduce((p,q)=>p+q.a,0);if(w>=h){const rw=s/h;let yy=y;row.forEach(q=>{const hh=q.a/rw;out.push({...q,x,y:yy,w:rw,h:hh});yy+=hh});x+=rw;w-=rw}else{const rh=s/w;let xx=x;row.forEach(q=>{const ww=q.a/rh;out.push({...q,x:xx,y,w:ww,h:rh});xx+=ww});y+=rh;h-=rh}}return out}
+const MAX=Math.max(...Y.map(tot));
+function tree(y){const W=box.clientWidth,H=box.clientHeight,k=Math.sqrt(tot(y)/MAX),out={};const secs=ORD.map(s=>({k:s,v:D[y].filter(t=>SEC[t]===s).reduce((a,t)=>a+M[y][t],0)})).filter(s=>s.v>0);
+lay(secs,0,0,W*k,H*k).forEach(s=>lay(D[y].filter(t=>SEC[t]===s.k).map(t=>({k:t,v:M[y][t]})),s.x,s.y,s.w,s.h).forEach(r=>out[r.k]=r));return out}
+ALL.forEach(t=>{const e=document.createElement('div');e.className='b';e.style.background=SG[SEC[t]][1];e.addEventListener('pointerenter',ev=>tipOn(t,ev));e.addEventListener('pointermove',tipMove);e.addEventListener('pointerleave',tipOff);box.appendChild(e);E[t]=e});
+const L=(a,b,p)=>a+(b-a)*p,ez=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+function draw(A,B,p){ALL.forEach(t=>{const a=A[t],b=B[t],e=E[t];let r,o=1;if(a&&b)r={x:L(a.x,b.x,p),y:L(a.y,b.y,p),w:L(a.w,b.w,p),h:L(a.h,b.h,p)};else if(a){r={x:a.x+a.w*p/2,y:a.y+a.h*p/2,w:a.w*(1-p),h:a.h*(1-p)};o=1-p}else if(b){r={x:b.x+b.w*(1-p)/2,y:b.y+b.h*(1-p)/2,w:b.w*p,h:b.h*p};o=p}else{e.style.display='none';return}
+e.style.display='';e.style.left=r.x+'px';e.style.top=r.y+'px';e.style.width=Math.max(r.w,0)+'px';e.style.height=Math.max(r.h,0)+'px';e.style.opacity=o;const fs=Math.min(22,r.w/(t.length*.64+.8),r.h*.42);e.style.fontSize=fs+'px';e.textContent=fs>=9?t:''})}
+function setY(y,dur){const A=RS,B=tree(y);cancelAnimationFrame(raf);
+[...$('#tmy').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.y===y));$('#tmtot').textContent=`${YL[y]||y} · 前100合计 ${(tot(y)/1000).toFixed(1)} 万亿美元`;
+if(!dur||RM||!Object.keys(A).length){draw(B,B,1);RS=B;cur=y;return Promise.resolve()}
+return new Promise(res=>{let st=0;const f=ts=>{if(!st)st=ts;const p=Math.min(1,(ts-st)/dur);draw(A,B,ez(p));if(p<1)raf=requestAnimationFrame(f);else{RS=B;cur=y;res()}};raf=requestAnimationFrame(f)})}
+Y.forEach(y=>{const b=document.createElement('button');b.type='button';b.textContent=YL[y]||y;b.dataset.y=y;b.onclick=()=>{playing=false;setY(y,1100)};$('#tmy').appendChild(b)});
+let playing=false;async function playAll(){playing=true;await setY('2021',600);for(const y of Y.slice(1)){if(!playing)return;await new Promise(r=>setTimeout(r,500));if(!playing)return;await setY(y,1300)}playing=false}
+$('#tmplay').onclick=playAll;
+$('#lg').innerHTML=ORD.map(k=>`<span><i style="background:${SG[k][1]}"></i>${SG[k][0]}</span>`).join('');
+$('#shares').innerHTML='<tr><th>行业占比</th>'+Y.map(y=>`<th>${YL[y]||y}</th>`).join('')+'</tr>'+ORD.map(k=>`<tr><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${SG[k][1]};margin-right:6px"></i>${SG[k][0]}</td>`+Y.map(y=>`<td>${share(y,k).toFixed(1)}%</td>`).join('')+'</tr>').join('');
+setY('2021',0);onView(box,()=>{if(!playing&&cur==='2021')playAll()});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{RS={};setY(cur,0)},150)});
+})();
+
+/* ch3 bump */
+(function(){
+const svg=$('#bump'),NS='http://www.w3.org/2000/svg',VW=1000,L=46,RR=210,TP=30,PH=470,OUT=TP+PH+42,VH=OUT+20;
+svg.setAttribute('viewBox',`0 0 ${VW} ${VH}`);
+const xs=i=>L+i*(VW-L-RR)/5,ys=r=>TP+(r-1)*PH/99;
+const STORIES=[['NVDA','#4c8dff','英伟达'],['MU','#2ec4a6','美光'],['INTC','#e0b33a','英特尔'],['UNH','#ff8a3d','联合健康'],['PFE','#e0609a','辉瑞']];
+let h=`<g>`;Y.forEach((y,i)=>h+=`<text class="ax" x="${xs(i)}" y="14" text-anchor="middle">${YL[y]||y}</text>`);
+[1,25,50,75,100].forEach(r=>h+=`<text class="ax" x="${L-10}" y="${ys(r)+4}" text-anchor="end">#${r}</text>`);
+h+=`<line x1="${L}" x2="${xs(5)}" y1="${OUT}" y2="${OUT}" stroke="#4a5563" stroke-dasharray="4 6"/><text class="ax" x="${L-10}" y="${OUT+4}" text-anchor="end">榜外</text></g><g id="gl">`;
+ALL.forEach(t=>{let d='',pv=false;Y.forEach((y,i)=>{const r=R[y][t];if(r){d+=(pv?'L':'M')+xs(i)+' '+ys(r);pv=true}else pv=false});h+=`<path class="g" d="${d}"/>`});
+h+=`</g><g id="hlg"></g><g id="hitg">`;ALL.forEach(t=>{h+=`<path class="hit" data-t="${t}" d="${full(t)}"/>`});h+='</g>';svg.innerHTML=h;
+function full(t){return 'M'+Y.map((y,i)=>xs(i)+' '+(R[y][t]?ys(R[y][t]):OUT)).join('L')}
+const lab=r=>r?'#'+r:'榜外';
+function desc(t){const s=Y.map(y=>R[y][t]||0),fi=s.findIndex(v=>v),la=s.length-1-[...s].reverse().findIndex(v=>v);let m='';if(s.slice(fi+1,la).some(v=>!v))m=' → 榜外';return `${lab(s[0])}${m} → ${lab(s[5])}`}
+let active=[];
+function render(list,animate){active=list;const g=$('#hlg');let s='';const ends=[];
+list.forEach(([t,c,cn],k)=>{const yEnd=R['2026'][t]?ys(R['2026'][t]):OUT;ends.push({t,c,cn,y:yEnd,k});s+=`<path class="hl" id="hl${k}" stroke="${c}" d="${full(t)}"/>`;Y.forEach((y,i)=>{const r=R[y][t];s+=`<circle cx="${xs(i)}" cy="${r?ys(r):OUT}" r="3.2" fill="${c}"/>`})});
+ends.sort((a,b)=>a.y-b.y);let last=-99;ends.forEach(e=>{e.ly=Math.max(e.y,last+30);last=e.ly;s+=`<text x="${xs(5)+12}" y="${e.ly+4}" fill="${e.c}" style="font-size:14px;font-weight:700;font-family:var(--f-mono)">${e.t}</text><text x="${xs(5)+12}" y="${e.ly+19}" fill="#a3adba" style="font-size:11px">${e.cn||''} ${desc(e.t)}</text>`});
+g.innerHTML=s;
+if(animate&&!RM)list.forEach((x,k)=>{const p=document.getElementById('hl'+k),len=p.getTotalLength();p.style.strokeDasharray=len;p.style.strokeDashoffset=len;p.getBoundingClientRect();p.style.transition=`stroke-dashoffset 1.2s ease-in-out ${k*.5}s`;p.style.strokeDashoffset=0})}
+const sb=$('#stories');const allBtn=document.createElement('button');allBtn.type='button';allBtn.textContent='五条故事线';allBtn.onclick=()=>{press(allBtn);render(STORIES,true)};sb.appendChild(allBtn);
+STORIES.forEach(st=>{const b=document.createElement('button');b.type='button';b.innerHTML=`<span style="color:${st[1]}">●</span> ${st[0]} ${st[2]}`;b.onclick=()=>{press(b);render([st],true)};sb.appendChild(b)});
+function press(b){[...sb.children].forEach(x=>x.setAttribute('aria-pressed',x===b))}
+press(allBtn);render(STORIES,false);onView(svg,()=>{if(active===STORIES||active.length===5)render(STORIES,true)});
+$('#bq').addEventListener('input',e=>{const v=e.target.value.trim().toUpperCase();if(ALL.includes(v)){press(null);render([[v,'#eef2f6','']],true);$('#bhint').textContent=desc(v)}else{$('#bhint').textContent=v?'不在任何一年的前100':''}});
+$('#hitg').addEventListener('pointerover',e=>{const t=e.target.dataset.t;if(t){tipOn(t,e);e.target.style.stroke='rgba(238,242,246,.55)';e.target.style.strokeWidth='2.4'}});
+$('#hitg').addEventListener('pointermove',e=>{if(!tip.hidden)tipMove(e)});
+$('#hitg').addEventListener('pointerout',e=>{tipOff();if(e.target.dataset.t){e.target.style.stroke='';e.target.style.strokeWidth=''}});
+$('#hitg').addEventListener('click',e=>{const t=e.target.dataset.t;if(t){press(null);render([[t,'#eef2f6','']],true)}});
+})();
+
+/* ch4 concentration */
+(function(){
+const svg=$('#conc'),V=Y.map(y=>D[y].slice(0,10).reduce((s,t)=>s+M[y][t],0)/tot(y)*100),W=1000,H=360,L=50,Rr=30,T=40,B=40;
+const x=i=>L+i*(W-L-Rr)/5,y=v=>T+(60-v)/30*(H-T-B);svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+let s='';[30,40,50,60].forEach(v=>s+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" stroke="#263040"/><text class="ax" x="${L-8}" y="${y(v)+4}" text-anchor="end">${v}%</text>`);
+s+=`<line x1="${L}" x2="${W-Rr}" y1="${y(50)}" y2="${y(50)}" stroke="#4a5563" stroke-dasharray="4 6"/>`;
+Y.forEach((t,i)=>s+=`<text class="ax" x="${x(i)}" y="${H-12}" text-anchor="middle">${YL[t]||t}</text>`);
+const d='M'+V.map((v,i)=>x(i)+' '+y(v)).join('L');
+s+=`<path d="${d}L${x(5)} ${y(30)}L${x(0)} ${y(30)}Z" fill="#4c8dff" opacity=".1"/><path id="cl" d="${d}" fill="none" stroke="#4c8dff" stroke-width="4" stroke-linejoin="round"/>`;
+V.forEach((v,i)=>s+=`<circle cx="${x(i)}" cy="${y(v)}" r="6" fill="#4c8dff" stroke="#151c26" stroke-width="3"/><text x="${x(i)}" y="${y(v)-14}" text-anchor="middle" fill="#eef2f6" style="font-size:15px;font-weight:700">${v.toFixed(1)}%</text>`);
+svg.innerHTML=s;
+onView(svg,()=>{if(RM)return;const p=$('#cl'),len=p.getTotalLength();p.style.transition='none';p.style.strokeDasharray=len;p.style.strokeDashoffset=len;p.getBoundingClientRect();p.style.transition='stroke-dashoffset 1.8s ease-in-out';p.style.strokeDashoffset=0});
+})();
+
+/* ch5 board */
+(function(){
+const board=$('#board');let C=10,W,H=40,G=4,cur='2021',sel=null,timer=null;const tiles={},slots=[];
+for(let i=0;i<100;i++){const s=document.createElement('div');s.className='slot';s.textContent=i+1;board.appendChild(s);slots.push(s)}
+ALL.forEach(t=>{const el=document.createElement('div');el.className='t out';el.innerHTML=`<span class="r"></span><span class="k">${t}</span>`;el._out=true;
+el.addEventListener('pointerenter',e=>tipOn(t,e));el.addEventListener('pointermove',tipMove);el.addEventListener('pointerleave',tipOff);el.addEventListener('click',()=>setSel(sel===t?null:t));board.appendChild(el);tiles[t]=el});
+const pos=r=>{const i=r-1;return `translate(${(i%C)*(W+G)}px,${Math.floor(i/C)*(H+G)}px)`};
+function layout(){const w=board.clientWidth;C=w<560?5:10;H=w<560?36:40;W=(w-G*(C-1))/C;board.style.height=(Math.ceil(100/C)*(H+G)-G)+'px';slots.forEach((s,i)=>{s.style.width=W+'px';s.style.height=H+'px';s.style.transform=pos(i+1)});ALL.forEach(t=>{tiles[t].style.width=W+'px';tiles[t].style.height=H+'px'})}
+const base=y=>{const i=Y.indexOf(y);return i>0?Y[i-1]:null};
+function show(y){cur=y;$('#bybig').textContent=YL[y]||y;$('#bydate').textContent='　'+DATE[y]+' · 前100合计 '+(tot(y)/1000).toFixed(1)+' 万亿美元';
+[...$('#byrs').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.y===y));const b=base(y);
+ALL.forEach(t=>{const el=tiles[t],r=R[y][t];if(!r){if(!el._out){el.classList.add('out');el._out=true}return}
+let d='flat',mix=0,pr=b?R[b][t]:null;if(b){if(!pr)d='new';else if(pr!==r){d=pr>r?'up':'down';mix=Math.min(Math.abs(pr-r)/25,1)*65+15}}
+el.dataset.d=d;el.style.setProperty('--mix',mix+'%');el.style.color=(d==='up'||d==='down')&&mix>50?'#fff':'';
+el.querySelector('.r').textContent='#'+r+(d==='up'?' ▲'+(pr-r):d==='down'?' ▼'+(r-pr):d==='new'?' 新':'');
+if(el._out){el.style.transition='none';el.style.transform=pos(r)+' scale(.6)';el.offsetWidth;el.style.transition='';el._out=false;el.classList.remove('out')}el.style.transform=pos(r)});
+ledger(y,b);applySel()}
+function ledger(y,b){const L=$('#ledger');if(!b){L.innerHTML=`<div><h3>2021 年前10</h3><div class="tags">${D[y].slice(0,10).map(t=>`<span class="tag" data-t="${t}">${t}<em>${fmtB(M[y][t])}</em></span>`).join('')}</div></div><p class="muted">点播放或年份，看此后每年的变化。</p>`;return}
+const ins=D[y].filter(t=>!R[b][t]),outs=D[b].filter(t=>!R[y][t]),mv=D[y].filter(t=>R[b][t]).map(t=>[t,R[b][t]-R[y][t]]);
+const ups=mv.filter(m=>m[1]>0).sort((a,c)=>c[1]-a[1]).slice(0,6),dns=mv.filter(m=>m[1]<0).sort((a,c)=>a[1]-c[1]).slice(0,6);
+const li=(arr,cls,f)=>`<div class="tags">${arr.map(([t,v])=>`<span class="tag ${cls}" data-t="${t}">${t}<em>${f(v,t)}</em></span>`).join('')}</div>`;
+L.innerHTML=`<div><h3>新进 ${ins.length} 家（对比 ${YL[b]||b}）</h3>${ins.length?li(ins.map(t=>[t,R[y][t]]),'n',v=>'#'+v):'<p class="muted">无</p>'}</div><div><h3>跌出 ${outs.length} 家</h3>${outs.length?li(outs.map(t=>[t,R[b][t]]),'o',v=>'原#'+v):'<p class="muted">无</p>'}</div><div><h3>升幅最大</h3>${li(ups,'n',v=>'▲'+v)}</div><div><h3>降幅最大</h3>${li(dns,'o',v=>'▼'+(-v))}</div>`}
+$('#ledger').addEventListener('click',e=>{const s=e.target.closest('[data-t]');if(s)setSel(sel===s.dataset.t?null:s.dataset.t)});
+function setSel(t){sel=t;applySel()}
+function applySel(){ALL.forEach(k=>{tiles[k].classList.toggle('sel',k===sel);tiles[k].classList.toggle('dim',!!sel&&k!==sel)})}
+Y.forEach(y=>{const b=document.createElement('button');b.type='button';b.textContent=YL[y]||y;b.dataset.y=y;b.onclick=()=>{stop();show(y)};$('#byrs').appendChild(b)});
+function stop(){clearInterval(timer);timer=null;$('#bplay').textContent='▶ 播放'}
+$('#bplay').onclick=()=>{if(timer){stop();return}let i=Y.indexOf(cur);if(i===Y.length-1){i=0;show(Y[0])}$('#bplay').textContent='❚❚ 暂停';timer=setInterval(()=>{i++;if(i>=Y.length){stop();return}show(Y[i]);if(i===Y.length-1)stop()},2000)};
+$('#bsq').addEventListener('input',e=>{const v=e.target.value.trim().toUpperCase();setSel(ALL.includes(v)?v:null)});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{layout();ALL.forEach(t=>tiles[t].style.transition='none');show(cur);requestAnimationFrame(()=>ALL.forEach(t=>tiles[t].style.transition=''))},150)});
+layout();ALL.forEach(t=>tiles[t].style.transition='none');show('2021');requestAnimationFrame(()=>requestAnimationFrame(()=>ALL.forEach(t=>tiles[t].style.transition='')));
+})();
+</script>
+
+</body>
+</html>
