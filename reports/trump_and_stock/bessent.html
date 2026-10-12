@@ -74,6 +74,15 @@ summary{cursor:pointer;padding:12px 16px;font-weight:500}
 .arch .ar{display:grid;grid-template-columns:96px 160px 1fr 48px;gap:10px;font-size:13px;border-bottom:1px solid var(--grid);padding-block:6px}
 .arch .ar>*{min-width:0}
 .arch .kind{font-size:12px;color:var(--muted)}
+.quote{display:flex;flex-direction:column;gap:14px;background:var(--sheet);border:1px solid var(--rule);border-left:4px solid #2F6FB0;padding:18px 20px}
+.quote blockquote{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(20px,3vw,26px);line-height:1.4;text-wrap:balance}
+.quote .ctx{font-size:14px;color:var(--muted);max-width:78ch;margin:0}
+.quote .ctx mark{background:#FFF0C2;color:var(--ink);padding:0 2px}
+.quote .meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px}
+.quote .meta b{font-family:var(--mono);font-weight:600}
+.quote .links{display:flex;flex-wrap:wrap;gap:6px 8px}
+.quote .links a{font-size:12.5px;text-decoration:none;border:1px solid var(--rule);border-radius:3px;padding:1px 8px;color:var(--price)}
+.quote .links a.main{border-color:var(--price);font-weight:500}
 .foot{font-size:12.5px;color:var(--muted);max-width:82ch;margin:0}
 @media (max-width:760px){
   .row{grid-template-columns:28px 1fr 64px 64px}
@@ -140,6 +149,25 @@ summary{cursor:pointer;padding:12px 16px;font-weight:500}
   <summary id="archsum">其他检索到的贝森特视频</summary>
   <div class="arch" id="arch"></div>
 </details>
+
+<section id="supply-chains">
+  <h2>专题：“供应链安全与股指同样重要”</h2>
+  <div class="quote">
+    <div class="eyebrow">2026-05-29 · 里根国家经济论坛（Simi Valley）主题演讲 · “Economic Security Is National Security”</div>
+    <blockquote>“That secure supply chains matter as much as stock indices.”</blockquote>
+    <p class="ctx">这句话出现在演讲收尾的总结段。他连用几句“美国已经醒来”的排比：过去“在收银台而不是工厂门口衡量富足”，把市场准入当成战略成功；现在要明白有韧性的经济是强大共和国的基础，衡量经济不只看产出，还要看惠及了谁，<mark>安全的供应链和股指同样重要</mark>，生产能力就是力量，贸易、产业和国家安全政策必须配合在一起。演讲前半段具体讲到美国在关键矿产、药品原料和军需补给上依赖对手，“美国不应再让自身安全依赖于无法掌控的供应链”。</p>
+    <p class="ctx">这和他一贯的口径一致：不把股市涨跌当成政策成败的标准，而把股指和供应链、制造能力放在同一张记分卡上。</p>
+    <div class="meta"><span>演讲当日QQQ收盘 <b>$738.31</b></span><span>次日 <b class="up">+0.6%</b></span><span>20日后 <b class="dn">-1.9%</b></span><span>60日后 <b class="dn">-3.7%</b></span></div>
+    <div class="links">
+      <a class="main" href="https://youtu.be/D8gGsnx4P4g?t=865" target="_blank" rel="noopener">▶ 从这句话开始播放（14:25）</a>
+      <a href="https://www.youtube.com/watch?v=D8gGsnx4P4g" target="_blank" rel="noopener">▶ 里根基金会 · 完整主题演讲 16分钟</a>
+      <a href="https://www.youtube.com/watch?v=JgSapOqbshc" target="_blank" rel="noopener">▶ 论坛完整场次（含 Kudlow 问答）</a>
+      <a href="https://www.youtube.com/watch?v=giuSLjkH2f0" target="_blank" rel="noopener">▶ Forbes 片段：America Has Awakened</a>
+      <a href="https://www.youtube.com/watch?v=dZH7VwMdpjs" target="_blank" rel="noopener">▶ Reuters 片段</a>
+      <a href="https://www.youtube.com/watch?v=DVrlwvwjsUc" target="_blank" rel="noopener">▶ 相关：American Compass 对谈（6月）</a>
+    </div>
+  </div>
+</section>
 
 <p class="foot">方法：在 YouTube 用“Bessent + stock market / stocks / Dow / S&amp;P 500 / Nasdaq / Wall Street / selloff / Trump put / Mag 7”及 CNBC、Fox Business、Bloomberg、Kudlow、Bartiromo、Meet the Press 等约90组关键词检索，得到贝森特相关视频491个；保留新闻机构、官方频道、论坛和播客发布的原始采访或讲话，排除评论类频道。视频平台不提供字幕抓取，所以摘要依据视频标题、简介和章节，并对重点场次用新闻报道核对原话；同一场采访的完整版与片段合并为一条。“发言时QQQ”取当日收盘价，周日节目取上一交易日收盘价，涨跌幅算到其后第1、20、60个交易日。YouTube 上传日可能比播出晚一天。价格变动与发言同时出现不代表因果关系；本页仅作信息整理，不构成投资建议。</p>
 </div>
