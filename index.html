@@ -32,12 +32,14 @@ a{color:var(--link)}
 .bar nav{display:flex;gap:18px;font-size:14px}
 .bar nav a{color:var(--muted);text-decoration:none}.bar nav a:hover{color:var(--ink)}
 
-.hero{padding-block:44px 28px;display:flex;flex-direction:column;gap:22px}
+.hero{padding-block:44px 32px;display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:center}
+.intro{display:flex;flex-direction:column;gap:18px;min-width:0}
+@media (min-width:960px){.hero{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px}.points{grid-template-columns:1fr!important}}
 .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
-h1{font-family:var(--display);font-weight:900;color:var(--ink);font-size:clamp(34px,6.4vw,64px);line-height:1.08;margin:0;text-wrap:balance}
-h1 em{display:block;font-style:normal;color:var(--amber);font-size:.56em;line-height:1.3;margin-top:.25em}
+h1{font-family:"ZCOOL QingKe HuangYou",var(--display);font-weight:400;color:var(--ink);font-size:clamp(46px,5.6vw,72px);white-space:nowrap;line-height:1.05;letter-spacing:.04em;margin:0;text-wrap:balance}
+h1 em{display:block;font-family:"Ma Shan Zheng",var(--display);font-style:normal;color:var(--amber);font-size:.5em;letter-spacing:.06em;line-height:1.3;margin-top:.3em}
 .lede{font-size:clamp(16px,2vw,18px);max-width:58ch;margin:0;color:var(--text)}
-figure{margin:0;display:flex;flex-direction:column;gap:10px}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
 .frame{display:block;background:var(--sheet);border:1px solid var(--rule);box-shadow:0 10px 30px rgba(15,34,64,.08);overflow:hidden}
 .frame img{display:block;width:100%;height:auto;aspect-ratio:1672/941}
 figcaption{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between}
@@ -71,6 +73,8 @@ footer p{margin:0;max-width:70ch}
 @media (max-width:560px){.bar nav{gap:12px}.hero{padding-block:28px 20px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&text=%E8%80%81%E7%8E%8B%E7%9C%8B%E7%BE%8E%E8%82%A1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E4%B8%80%E6%97%B6%E7%9A%84%E5%9D%91%EF%BC%8C%E4%B8%80%E8%B7%AF%E7%9A%84%E5%9D%A1&display=swap">
 </head>
 <body>
 <header class="bar">
@@ -81,22 +85,24 @@ footer p{margin:0;max-width:70ch}
 </header>
 
 <section class="wrap hero" aria-labelledby="t">
+  <div class="intro">
   <div class="kicker">When in doubt, zoom out</div>
   <h1 id="t">老王看美股<em>一时的坑，一路的坡</em></h1>
-  <figure>
-    <a class="frame" href="assets/zoom_out.jpg" target="_blank" rel="noopener" aria-label="打开大图">
-      <picture>
-        <source type="image/webp" srcset="assets/zoom_out_900.webp 900w, assets/zoom_out.webp 1672w" sizes="(max-width:1120px) 100vw, 1080px">
-        <img src="assets/zoom_out.jpg" width="1672" height="941" alt="QQQ 近五年周线：从2022年约260美元的低点一路走到2026年10月约750美元，图中一位登山者站在当下位置；右侧橙色虚线为之后三年的假想路径，标注“HYPOTHETICAL · NOT A FORECAST”。" fetchpriority="high">
-      </picture>
-    </a>
-    <figcaption><span>蓝线：QQQ 实际周线价格（Yahoo Finance），截至 2026-10-13。</span><span><b>橙色虚线为示意，不是预测</b>，收益没有保证。</span></figcaption>
-  </figure>
   <div class="points">
     <div><b>~$260 → ~$750</b><span>从2022年熊市低点到2026年10月，QQQ大约涨到原来的2.9倍</span></div>
     <div><b>-23%</b><span>2025年4月关税冲击：QQQ从2月高点$539.52跌到4月8日$416.06（日收盘）</span></div>
     <div><b>+81%</b><span>从那次低点到2026-10-09收盘$751.27的涨幅</span></div>
   </div>
+  </div>
+  <figure>
+    <a class="frame" href="assets/zoom_out.jpg" target="_blank" rel="noopener" aria-label="打开大图">
+      <picture>
+        <source type="image/webp" srcset="assets/zoom_out_900.webp 900w, assets/zoom_out.webp 1672w" sizes="(min-width:960px) 640px, 100vw">
+        <img src="assets/zoom_out.jpg" width="1672" height="941" alt="QQQ 近五年周线：从2022年约260美元的低点一路走到2026年10月约750美元，图中一位登山者站在当下位置；右侧橙色虚线为之后三年的假想路径，标注“HYPOTHETICAL · NOT A FORECAST”。" fetchpriority="high">
+      </picture>
+    </a>
+    <figcaption><span>蓝线：QQQ 实际周线价格（Yahoo Finance），截至 2026-10-13。</span><span><b>橙色虚线为示意，不是预测</b>，收益没有保证。</span></figcaption>
+  </figure>
 </section>
 
 <main class="wrap" id="reports">
