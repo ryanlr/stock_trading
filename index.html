@@ -3,39 +3,161 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>stock_trading</title>
+<title>拉长视角看美股</title>
+<meta name="description" content="用公开数据做的美股专题报告：QQQ 长期走势、美股前100更替、特朗普与财长贝森特谈股市。">
+<meta property="og:title" content="拉长视角看美股">
+<meta property="og:description" content="看不清的时候，把时间拉长。用公开数据做的美股专题报告。">
+<meta property="og:image" content="https://ryanlr.github.io/stock_trading/assets/zoom_out.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: site root — title, one line, one link card to reports/. Light only, same tokens as reports/index.html. */
-:root{--paper:#F6F8FA;--sheet:#FFFFFF;--ink:#14202B;--muted:#5B6875;--rule:#D9E0E7;--link:#1E3A5F;--blue:#245DE1;
-  --display:"Noto Serif SC","Songti SC",serif;--body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:light}
+/* Layout: site front page. Thin top bar → hero (headline + the "zoom out" chart as the centerpiece) → report index grouped by topic → footer.
+   Palette pulled from the hero image: navy ink, chart blue for history, amber for the imagined path. Light only (owner prefers light). */
+:root{
+  --paper:#F5F7FA; --sheet:#FFFFFF; --ink:#0F2240; --text:#1C2B3D; --muted:#5B6875; --rule:#D9E0E7; --grid:#EBEFF4;
+  --blue:#1B86B8; --amber:#D9840F; --link:#1E3A5F;
+  --display:"Noto Serif SC","Songti SC",serif; --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65}
-.wrap{max-width:980px;margin:0 auto;padding-inline:20px;padding-block:40px 64px;display:flex;flex-direction:column;gap:24px}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
-h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,5vw,42px);line-height:1.15;margin:0}
-p{margin:0;max-width:68ch}
-a.card{display:flex;flex-direction:column;gap:6px;max-width:460px;background:var(--sheet);border:1px solid var(--rule);border-top:4px solid var(--blue);padding:18px 20px;color:inherit;text-decoration:none;transition:box-shadow .15s}
-a.card:hover,a.card:focus-visible{box-shadow:0 6px 18px rgba(20,32,43,.12);outline:none}
-a.card h2{font-family:var(--display);font-weight:600;font-size:22px;margin:0}
-a.card .f{font-family:var(--mono);font-size:12px;color:var(--muted)}
-a.card .go{font-size:13.5px;color:var(--link);font-weight:500}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.65}
+a{color:var(--link)}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+.bar{border-bottom:1px solid var(--rule);background:var(--sheet)}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px}
+.brand{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--ink);text-decoration:none;font-weight:600}
+.brand span{color:var(--muted);font-weight:400}
+.bar nav{display:flex;gap:18px;font-size:14px}
+.bar nav a{color:var(--muted);text-decoration:none}.bar nav a:hover{color:var(--ink)}
+
+.hero{padding-block:44px 28px;display:flex;flex-direction:column;gap:22px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
+h1{font-family:var(--display);font-weight:900;color:var(--ink);font-size:clamp(34px,6.4vw,64px);line-height:1.08;margin:0;text-wrap:balance}
+h1 em{display:block;font-style:normal;color:var(--amber);font-size:.56em;line-height:1.3;margin-top:.25em}
+.lede{font-size:clamp(16px,2vw,18px);max-width:58ch;margin:0;color:var(--text)}
+figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.frame{display:block;background:var(--sheet);border:1px solid var(--rule);box-shadow:0 10px 30px rgba(15,34,64,.08);overflow:hidden}
+.frame img{display:block;width:100%;height:auto;aspect-ratio:1672/941}
+figcaption{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between}
+figcaption b{color:var(--amber);font-weight:500}
+
+.points{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.points div{background:var(--sheet);padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.points b{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.points span{font-size:13px;color:var(--muted)}
+
+main{display:flex;flex-direction:column;gap:36px;padding-block:20px 56px}
+.sechead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+h2{font-family:var(--display);font-weight:600;font-size:26px;color:var(--ink);margin:0}
+.sechead a{font-size:13.5px;text-decoration:none}
+.group{display:flex;flex-direction:column;gap:12px}
+.group h3{font-size:14px;font-weight:500;color:var(--muted);margin:0;display:flex;gap:10px;align-items:center}
+.group h3 code{font-family:var(--mono);font-size:12px;color:var(--muted);background:none}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+a.card{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--c);padding:16px 18px 14px;color:inherit;text-decoration:none;min-width:0;transition:box-shadow .15s,transform .15s}
+a.card:hover,a.card:focus-visible{box-shadow:0 8px 22px rgba(15,34,64,.12);transform:translateY(-2px);outline:none}
+a.card:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+a.card h4{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.3;color:var(--ink);margin:0;text-wrap:balance}
+a.card p{margin:0;font-size:13.5px;color:var(--text)}
+a.card .f{margin-top:auto;padding-top:6px;font-family:var(--mono);font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+a.card .f span:last-child{color:var(--link)}
+.new{position:absolute;top:12px;right:12px;font-size:11px;font-weight:500;color:#fff;background:var(--amber);padding:0 7px;border-radius:2px}
+
+footer{border-top:1px solid var(--rule);background:var(--sheet)}
+footer .wrap{padding-block:20px 28px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;font-size:12.5px;color:var(--muted)}
+footer p{margin:0;max-width:70ch}
+@media (max-width:560px){.bar nav{gap:12px}.hero{padding-block:28px 20px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="eyebrow">ryanlr / stock_trading</div>
-  <h1>stock_trading</h1>
-  <p>美股专题研究与数据报告。</p>
-  <a class="card" href="reports/">
-    <span class="f">reports/</span>
-    <h2>市场报告</h2>
-    <span>所有报告的目录</span>
-    <span class="go">进入 →</span>
-  </a>
-</div>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="./">stock_trading <span>/ ryanlr</span></a>
+    <nav aria-label="站点"><a href="#reports">报告</a><a href="reports/">全部目录</a></nav>
+  </div>
+</header>
+
+<section class="wrap hero" aria-labelledby="t">
+  <div class="kicker">When in doubt, zoom out</div>
+  <h1 id="t">拉长视角看美股<em>难熬的一段，不是整段旅程。</em></h1>
+  <p class="lede">短期的回调、关税冲击和战争消息都会让人怀疑。把 QQQ 放回五年的周线里看，每一次让人难受的下跌，在长期走势上都只是一小段坡。这个站点用公开数据，把这些时刻和之后的走势摆在一起看。</p>
+  <figure>
+    <a class="frame" href="assets/zoom_out.jpg" target="_blank" rel="noopener" aria-label="打开大图">
+      <picture>
+        <source type="image/webp" srcset="assets/zoom_out_900.webp 900w, assets/zoom_out.webp 1672w" sizes="(max-width:1120px) 100vw, 1080px">
+        <img src="assets/zoom_out.jpg" width="1672" height="941" alt="QQQ 近五年周线：从2022年约260美元的低点一路走到2026年10月约750美元，图中一位登山者站在当下位置；右侧橙色虚线为之后三年的假想路径，标注“HYPOTHETICAL · NOT A FORECAST”。" fetchpriority="high">
+      </picture>
+    </a>
+    <figcaption><span>蓝线：QQQ 实际周线价格（Yahoo Finance），截至 2026-10-13。</span><span><b>橙色虚线为示意，不是预测</b>，收益没有保证。</span></figcaption>
+  </figure>
+  <div class="points">
+    <div><b>~$260 → ~$750</b><span>从2022年熊市低点到2026年10月，QQQ大约涨到原来的2.9倍</span></div>
+    <div><b>-23%</b><span>2025年4月关税冲击：QQQ从2月高点$539.52跌到4月8日$416.06（日收盘）</span></div>
+    <div><b>+81%</b><span>从那次低点到2026-10-09收盘$751.27的涨幅</span></div>
+  </div>
+</section>
+
+<main class="wrap" id="reports">
+  <div class="sechead"><h2>专题报告</h2><a href="reports/">全部报告目录 →</a></div>
+
+  <section class="group" aria-labelledby="g1">
+    <h3 id="g1">特朗普、贝森特与股市 <code>reports/trump_and_stock/</code></h3>
+    <div class="cards">
+      <a class="card" href="reports/trump_and_stock/trump.html" style="--c:#C8102E">
+        <h4>特朗普的股市喊话</h4>
+        <p>30条关键发言标在QQQ日线上：“翻倍论”“道指10万”“现在是买入的好时机”，以及说完之后20天、60天的走势。</p>
+        <span class="f"><span>trump.html</span><span>打开 →</span></span>
+      </a>
+      <a class="card" href="reports/trump_and_stock/bessent.html" style="--c:#C47A00">
+        <span class="new">新</span>
+        <h4>财长贝森特谈股市</h4>
+        <p>26场采访与讲话、55个视频：“没有特朗普看跌期权”“回调是健康的”，以及“供应链安全与股指同样重要”。</p>
+        <span class="f"><span>bessent.html</span><span>打开 →</span></span>
+      </a>
+      <a class="card" href="reports/trump_and_stock/index.html" style="--c:#5B6875">
+        <h4>两份报告总览</h4>
+        <p>总统和财长对股市的口径有什么不同，从这里进入两份报告。</p>
+        <span class="f"><span>trump_and_stock/</span><span>打开 →</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group" aria-labelledby="g2">
+    <h3 id="g2">美股前100的更替 <code>reports/top_100_Nasdaq_evolution/</code></h3>
+    <div class="cards">
+      <a class="card" href="reports/top_100_Nasdaq_evolution/top100.html" style="--c:#1B86B8">
+        <span class="new">新</span>
+        <h4>百强更替</h4>
+        <p>标普500市值前100，2021→2026：谁走谁来、钱流向哪里、排名轨迹、头部集中度，以及逐年播放的排名板。</p>
+        <span class="f"><span>top100.html</span><span>打开 →</span></span>
+      </a>
+      <a class="card" href="reports/top_100_Nasdaq_evolution/index.html" style="--c:#1B86B8">
+        <h4>三段行情对比：普涨还是分化？</h4>
+        <p>三个时期前100公司的涨跌分布。</p>
+        <span class="f"><span>index.html</span><span>打开 →</span></span>
+      </a>
+      <a class="card" href="reports/top_100_Nasdaq_evolution/qqq_2020_2026.html" style="--c:#1B86B8">
+        <h4>QQQ 2020–2026 · 三段行情</h4>
+        <p>QQQ 价格走势与三段行情对照。</p>
+        <span class="f"><span>qqq_2020_2026.html</span><span>打开 →</span></span>
+      </a>
+      <a class="card" href="reports/top_100_Nasdaq_evolution/sp100_evolution.html" style="--c:#1B86B8">
+        <h4>谁留在前100？</h4>
+        <p>2021—2026 大盘股名单演变。</p>
+        <span class="f"><span>sp100_evolution.html</span><span>打开 →</span></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>所有报告均为单个网页，数据内嵌，可交互查看。价格数据来自 Yahoo Finance。仅作信息整理，不构成投资建议。</p>
+    <span><a href="https://github.com/ryanlr/stock_trading">GitHub 仓库</a></span>
+  </div>
+</footer>
 </body>
 </html>
