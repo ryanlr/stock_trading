@@ -26,6 +26,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install --quiet yfinance pandas numpy
+      - name: Fetch QQQ data and option chain
+        run: python skills/market-risk-playbook/scripts/fetch_data.py --data-dir skills/market-risk-playbook/data
       - name: Build page
         run: |
           python skills/market-risk-playbook/scripts/build_playbook.py \
