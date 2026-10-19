@@ -99,7 +99,7 @@ def load_prices(index_sym: str, vol_sym: str, cache_dir: str, offline: bool) -> 
     return df.sort_index()
 
 
-def option_structure(spot: float, symbol: str = "^SPX", max_days: int = 35) -> dict | None:
+def option_structure(spot: float, symbol: str = "^SPX", max_days: int = 35, flat_iv: float = 0.18) -> dict | None:
     """Call wall, put wall and gamma flip from the listed option chain (open interest)."""
     try:
         import yfinance as yf  # noqa: WPS433
@@ -117,11 +117,16 @@ def option_structure(spot: float, symbol: str = "^SPX", max_days: int = 35) -> d
                 rows.append(t)
         if not rows:
             return None
-        oc = pd.concat(rows).dropna()
-        oc = oc[(oc.openInterest > 0) & (oc.impliedVolatility.between(0.03, 3.0))
-                & (oc.strike.between(spot * 0.85, spot * 1.15))]
+        oc = pd.concat(rows)
+        oc = oc[oc.openInterest.fillna(0) > 0]
+        oc = oc[oc.strike.between(spot * 0.85, spot * 1.15)].copy()
         if oc.empty:
             return None
+        # Yahoo's IVs for index options are often junk outside market hours (~0 or blank).
+        # Keep every row with open interest; replace an unusable IV with the vol-index level.
+        bad = ~oc.impliedVolatility.between(0.05, 2.0)
+        oc.loc[bad, "impliedVolatility"] = flat_iv
+        iv_fallback_share = float(bad.mean())
 
         def gex(s: float) -> float:
             t = oc.days.values / 365.0
@@ -146,7 +151,8 @@ def option_structure(spot: float, symbol: str = "^SPX", max_days: int = 35) -> d
         call_wall = float(calls[calls.index >= spot].idxmax()) if (calls.index >= spot).any() else None
         put_wall = float(puts[puts.index <= spot].idxmax()) if (puts.index <= spot).any() else None
         return {"call_wall": call_wall, "put_wall": put_wall, "flip": flip,
-                "gex_spot": gex(spot), "expiries": int(oc.days.nunique())}
+                "gex_spot": gex(spot), "expiries": int(oc.days.nunique()), "rows": int(len(oc)),
+                "iv_fallback_share": iv_fallback_share}
     except Exception as e:  # pragma: no cover
         print(f"[warn] option chain unavailable: {e}", file=sys.stderr)
         return None
@@ -455,7 +461,7 @@ def render(res: dict, opt: dict | None, intraday: bool, index_name: str, ga: str
 <tr><td>看跌墙（现价下方看跌期权未平仓量最大的行权价，常起支撑作用）</td><td class="n"><b>{f0(opt['put_wall']) if opt['put_wall'] else '—'}</b></td></tr>
 </table></div>
 <p class="note">数据：SPX 期权链（Yahoo Finance），35 天内的 {opt['expiries']} 个到期日，未平仓量为交易所上一交易日公布值；
-gamma 用 Black-Scholes 由隐含波动率估算，并假设做市商持有看涨多头、看跌空头的常用惯例——这是近似，不是做市商真实持仓。</p>
+gamma 用 Black-Scholes 由隐含波动率估算（{opt['iv_fallback_share']:.0%} 的合约因报价隐含波动率不可用而改用 VIX 水平），并假设做市商持有看涨多头、看跌空头的常用惯例——这是近似，不是做市商真实持仓。</p>
 </section>"""
     else:
         opt_html = """
@@ -475,8 +481,10 @@ gamma 用 Black-Scholes 由隐含波动率估算，并假设做市商持有看�
 
     vq = res["vrp_today_q"]
     vrp_line = (f"今天的方差风险溢价落在第 <b>{vq + 1}</b> 档（1 最低、5 最高）。"
-                + ("<b>处于最高一档——这是本手册唯一会说“可以加仓”的条件。</b>" if vq == 4
-                   else "不在最高一档，所以今天没有“加仓”信号。")) if vq is not None else ""
+                + ("<b>处于最高一档——按原研究，这是唯一会说“可以加仓”的条件。</b>" if vq == 4
+                   else "不在最高一档，所以今天没有“加仓”信号。")
+                + (f"需要说明：本站复算的 t = {res['vrp_t']:.2f}，弱于原研究的 2.70，未达常用的 2 的门槛——方向一致，但证据只能算倾向，不是定论。"
+                   if res["vrp_t"] < 2 else "")) if vq is not None else ""
 
     left = "".join(f"<li>{e(x)}</li>" for x in res["left_out"]) or "<li>今天所有计算出的概率都通过了自身门槛。</li>"
     state = "盘中（今日收盘未定）" if intraday else "收盘后"
@@ -600,7 +608,7 @@ def main() -> None:
     intraday = (a.asof is None and df.index[-1].date() == now.date()
                 and now.weekday() < 5 and (now.hour, now.minute) < (16, 15))
     res = compute(df)
-    opt = option_structure(res["P"], a.options) if (a.options and not a.asof and not a.offline) else None
+    opt = option_structure(res["P"], a.options, flat_iv=float(res["vix"]) / 100) if (a.options and not a.asof and not a.offline) else None
     page = render(res, opt, intraday, a.name, a.ga or None)
     with open(a.out, "w", encoding="utf-8") as fh:
         fh.write(page)

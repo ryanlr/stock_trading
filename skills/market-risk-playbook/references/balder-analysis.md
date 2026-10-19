@@ -50,3 +50,24 @@ paths"), a free daily page from Balder's 龙气榜 / Signal Desk. A sister page
 - The exact "comparable position" filter. Their 2,794 positions (≈ half of all sessions since 2005) and an 87% regain rate (vs 57% for "just off the high" in finding #5) imply extra conditions beyond the drawdown band — possibly a narrower drawdown window or a volatility-regime filter. We use the drawdown band alone and say so; our probabilities will differ.
 - The recent-high window. Finding #5's "529 samples below −10%" since 2005 is too few for an all-time-high drawdown (2008–2013 alone would exceed it), so it is a rolling high; we use 252 sessions.
 - The base-rate threshold for "left out". We use 5 percentage points and n ≥ 100.
+
+## Validation: our first build vs Balder, same session (2026-10-19)
+
+| Metric | Balder (intraday 7,690) | This skill (close 7,690.73) |
+|---|---|---|
+| Recent high | 7,819 | 7,819 |
+| Comparable positions since 2005 | 2,794 | 2,686 (0–2% band) |
+| No deeper break (−5%) | 84% | 86% |
+| Regains high within 20 sessions | 87% | 81% |
+| Add another 2% (base) | 53% (65%) | 47% (60%) |
+| Paths A / B / C / D | 78 / 6 / 13 / 3% | 76 / 11 / 12 / 2% |
+| Deepest drawdown A / C / D | −1.8 / −6.2 / −12.0% | −1.5 / −6.1 / −12.4% |
+| Next-session range | 7,656–7,725 | 7,651–7,731 |
+| Realised/implied median | 0.54 | 0.47 (since 2005, VIX) |
+| 50% band out-of-sample coverage | 50.4% | 50.2% |
+| Regain by band 5–10% / >10% | 7% / 0% | 8% / 0% |
+| VRP top quintile vs baseline | +1.65% vs 0.79%, t 2.70, n 54 | +1.58% vs 0.79%, t 1.42, n 55 |
+
+Close enough to confirm the definitions; the residual gaps (regain rate, chop share) point to an
+extra conditioning filter in the original that is not disclosed. The VRP effect has the same size
+but weaker significance under our Welch test, and the page says so.
