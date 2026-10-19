@@ -173,8 +173,11 @@ def _option_structure(spot: float, symbol: str, scale: float, max_days: int, fla
         by = oc.groupby(["kind", "strike"]).openInterest.sum()
         calls = by.loc["C"]
         puts = by.loc["P"]
-        call_wall = float(calls[calls.index >= spot].idxmax()) if (calls.index >= spot).any() else None
-        put_wall = float(puts[puts.index <= spot].idxmax()) if (puts.index <= spot).any() else None
+        # walls = the largest open interest *near* price (within 4%), not the far round-number strikes
+        cw = calls[(calls.index >= spot) & (calls.index <= spot * 1.04)]
+        pw = puts[(puts.index <= spot) & (puts.index >= spot * 0.96)]
+        call_wall = float(cw.idxmax()) if len(cw) else None
+        put_wall = float(pw.idxmax()) if len(pw) else None
         return {"call_wall": call_wall, "put_wall": put_wall, "flip": flip,
                 "gex_spot": gex(spot), "expiries": int(oc.days.nunique()), "rows": int(len(oc)),
                 "iv_fallback_share": iv_fallback_share}
