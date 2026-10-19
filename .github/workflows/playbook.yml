@@ -1,4 +1,4 @@
-name: Build market risk playbook (prediction.html)
+name: Build QQQ buy-point radar (prediction.html)
 
 on:
   schedule:
@@ -32,7 +32,7 @@ jobs:
         run: |
           python skills/market-risk-playbook/scripts/build_playbook.py \
             --out prediction.html \
-            --cache-dir skills/market-risk-playbook/data \
+            --data-dir skills/market-risk-playbook/data \
             --json skills/market-risk-playbook/data/latest.json
       - name: Commit if changed
         run: |
