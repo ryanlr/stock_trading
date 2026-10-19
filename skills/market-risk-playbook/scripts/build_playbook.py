@@ -587,7 +587,7 @@ def render(df: pd.DataFrame, bt: dict, opt: dict | None, vxn_stale: bool, ga: st
 <h3>验证：会不会只是运气？</h3>
 <p><b>随机对照</b>：从对照池里随机抽 {bt['n_done']} 天、重复数千次，看有多大比例能达到信号的平均收益（p 值越小，越不像运气）：</p>
 <div class="scroll"><table><tr><th>对照池</th><th class="n">5 日</th><th class="n">10 日</th><th class="n">20 日</th></tr>{p_rows}</table></div>
-<p><b>参数稳健性</b>：把四个阈值各换几档（回调 3–7%、RSI(2) 3/5/10、放量 1.25/1.5/2 倍、VXN 5/10/20%），共 {bt['grid_cells']} 组，其中 {bt['grid_usable']} 组样本够用。<b>{pct(bt['grid_pos_share'], 0)}</b> 的组合 5 日收益都高于全部交易日，中位数多出 {pct(bt['grid_median_excess'], 2, True)}。把收益序列整体错位后重跑同样的搜索作为“纯噪声”基准：真实结果的中位 t 值 {bt['grid_median_t']:.2f} 远高于噪声（p = {bt['family_p_median']:.3f}），最好的一组也胜过噪声中最好的一组（p = {bt['family_p_max']:.3f}）。</p>
+<p><b>参数稳健性</b>：把四个阈值各换几档（回调 3–7%、RSI(2) 3/5/10、放量 1.25/1.5/2 倍、VXN 5/10/20%），共 {bt['grid_cells']} 组，其中 {bt['grid_usable']} 组样本够用。<b>{pct(bt['grid_pos_share'], 0)}</b> 的组合 5 日收益都高于全部交易日，中位数多出 {pct(bt['grid_median_excess'], 2, True)}。把收益序列整体错位后重跑同样的搜索作为“纯噪声”基准：真实结果的中位 t 值 {bt['grid_median_t']:.2f} 远高于噪声（p = {bt['family_p_median']:.3f}）；{('最好的一组也胜过噪声中最好的一组（p = ' + format(bt['family_p_max'], '.3f') + '）') if bt['family_p_max'] < 0.05 else ('但单看最好的那一组，并不显著胜过噪声中最好的一组（p = ' + format(bt['family_p_max'], '.3f') + '）——证据在于“几乎所有参数都有效”，而不在某一组特别好')}。</p>
 <div class="callout"><b>必须说清的几点</b><br>
 ① 预先写定的这组阈值，恰好是 {bt['grid_cells']} 组里 5 日 t 值最高的（t = {bt['rule_cell_t']:.2f}）。这是巧合，也意味着 {pct(s['f5']['mean'], 1, True)} 偏乐观；更合理的预期是参数网格的中位数，即比平常多 {pct(bt['grid_median_excess'], 1, True)} 左右。<br>
 ② 10 日、20 日的超额不显著：和“上升趋势里任意 5% 回调”比，p ≈ {nl['pullback']['f10']:.2f}。买在回调本身就不错（20 日平均 {pct(pl['f20']['mean'], 1, True)}，全部交易日为 {pct(b['f20']['mean'], 1, True)}），恐慌出清只是把<b>时点</b>选得更好。<br>

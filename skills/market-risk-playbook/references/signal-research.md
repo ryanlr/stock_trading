@@ -39,7 +39,7 @@ Near misses (washout score ≥ 80, one or two legs missing): 07-28, 10-14, 10-15
 - Excess vs all days: t = 3.13 (5d), 0.55 (10d), 0.87 (20d).
 - Random-entry nulls (same n, 5,000 draws): 5d p = 0.01 (all days), 0.001 (uptrend days), 0.025 (uptrend ≥5% pullback days). 10d/20d p = 0.13–0.50.
 - Grid: dd {3..7%} × RSI(2) {3,5,10} × volume {1.25,1.5,2.0} × VXN {5,10,20%} = 135 cells, 129 with ≥8 events. 100% positive 5-day excess; median +1.03%, median t 1.94, max t 3.13.
-- Family-wise null (forward returns circularly shifted, whole grid re-run): median-t p ≈ 0.005, max-t p ≈ 0.02.
+- Family-wise null (forward returns circularly shifted, whole grid re-run, 500 reps): median-t p ≈ 0.006; max-t p ≈ 0.06 (an exploratory 200-rep run gave 0.02). The best single cell is not significant on its own; the evidence is that nearly every cell works.
 - **Caveat:** the pre-registered cell is the grid maximum. Use the grid median as the expectation.
 
 ## 5. Things tested that did not make the rule

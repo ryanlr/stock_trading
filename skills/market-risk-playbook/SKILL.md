@@ -41,7 +41,7 @@ Rationale: short-term reversal in index ETFs plus the variance-risk-premium effe
 ## What the backtest says (2001-03 → 2026-10, 25 completed events)
 
 - 5-day: +1.80% mean, 84% up (all days +0.28%, 58%); excess t = 3.13; random-entry nulls p = 0.001–0.025.
-- Robust: all 129 usable cells of a 135-cell threshold grid beat the base rate at 5 days; median excess +1.03%; family-wise null p ≈ 0.005 (median t) / 0.02 (max t).
+- Robust: all 129 usable cells of a 135-cell threshold grid beat the base rate at 5 days; median excess +1.03%; family-wise null p ≈ 0.006 for the grid's median t; the single best cell is not significant on its own (max-t p ≈ 0.06) — the evidence is breadth, not one strong cell.
 - The pre-registered cell happens to be the grid's best → expect ~+1% excess, not +1.5%.
 - 10/20-day: no edge over "any ≥5% pullback in an uptrend" (p ≈ 0.48). It is a ~1-week bounce signal.
 - Invalidation (in-sample): close below the signal-day low within 5 sessions → 10/25 cases, 20-day mean −1.0% vs +4.4% for the rest.
