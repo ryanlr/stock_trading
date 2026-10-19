@@ -342,7 +342,9 @@
   "call_wall": null,
   "put_wall": null,
   "flip": null,
-  "gex_spot": 27790919.147211265,
-  "expiries": 2
+  "gex_spot": 27688576.09192729,
+  "expiries": 2,
+  "rows": 16,
+  "iv_fallback_share": 0.1875
  }
 }

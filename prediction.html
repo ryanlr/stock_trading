@@ -94,7 +94,7 @@ footer{padding-block:18px 40px;font-size:12.5px;color:var(--muted)}
 <tr><td>看跌墙（现价下方看跌期权未平仓量最大的行权价，常起支撑作用）</td><td class="n"><b>—</b></td></tr>
 </table></div>
 <p class="note">数据：SPX 期权链（Yahoo Finance），35 天内的 2 个到期日，未平仓量为交易所上一交易日公布值；
-gamma 用 Black-Scholes 由隐含波动率估算，并假设做市商持有看涨多头、看跌空头的常用惯例——这是近似，不是做市商真实持仓。</p>
+gamma 用 Black-Scholes 由隐含波动率估算（19% 的合约因报价隐含波动率不可用而改用 VIX 水平），并假设做市商持有看涨多头、看跌空头的常用惯例——这是近似，不是做市商真实持仓。</p>
 </section>
 <section aria-labelledby="s-led"><h2 id="s-led">区间账本：每天都记，错了也记</h2>
 <p>2006 年以来逐日样本外检验：50% 区间实际覆盖 <b>50.2%</b>，80% 区间覆盖 <b>80.1%</b>。
@@ -124,7 +124,7 @@ Balder 用十种平滑方法（各种均线、VWAP、开盘价、昨收）去猜
 <div class="tbl"><table><tr><th>回撤区间</th><th style="text-align:right">交易日数</th><th style="text-align:right">20 日内回到高点</th></tr><tr class='cur'><td>距高点 0% – 2%（当前）</td><td class='n'>2,686</td><td class='n'><b>81%</b></td></tr><tr class=''><td>距高点 2% – 5%</td><td class='n'>1,110</td><td class='n'><b>38%</b></td></tr><tr class=''><td>距高点 5% – 10%</td><td class='n'>734</td><td class='n'><b>8%</b></td></tr><tr class=''><td>距高点 10% – 20%</td><td class='n'>603</td><td class='n'><b>0%</b></td></tr><tr class=''><td>距高点 20% – 以上</td><td class='n'>330</td><td class='n'><b>0%</b></td></tr></table></div>
 <span class="so">对你意味着：回撤越深，越难在一个月内收复。深度带有惯性，不是弹簧；−5% 是减仓的位置，不是抄底的位置。</span></li>
 <li><b>唯一让我们说“加仓”的信号：方差风险溢价</b><span class="tag own">本站复算</span><br>
-Bollerslev、Tauchen 与 Zhou（Review of Financial Studies, 2009）发现，隐含方差减实际方差能预测未来股票收益，而且胜过市盈率、股息率和期限利差。本站用 VIX² 减 20 日实际方差，在不重叠的 20 日窗口上（274 个样本）分五档：最高一档之后 20 日平均涨 <b>1.58%</b>，全部窗口平均 0.79%；最高档对其余四档的 t = 1.42（最高档 55 个独立样本）。五档依次为 0.24% / 0.72% / 1.01% / 0.38% / 1.58%。今天的方差风险溢价落在第 <b>5</b> 档（1 最低、5 最高）。<b>处于最高一档——这是本手册唯一会说“可以加仓”的条件。</b>
+Bollerslev、Tauchen 与 Zhou（Review of Financial Studies, 2009）发现，隐含方差减实际方差能预测未来股票收益，而且胜过市盈率、股息率和期限利差。本站用 VIX² 减 20 日实际方差，在不重叠的 20 日窗口上（274 个样本）分五档：最高一档之后 20 日平均涨 <b>1.58%</b>，全部窗口平均 0.79%；最高档对其余四档的 t = 1.42（最高档 55 个独立样本）。五档依次为 0.24% / 0.72% / 1.01% / 0.38% / 1.58%。今天的方差风险溢价落在第 <b>5</b> 档（1 最低、5 最高）。<b>处于最高一档——按原研究，这是唯一会说“可以加仓”的条件。</b>需要说明：本站复算的 t = 1.42，弱于原研究的 2.70，未达常用的 2 的门槛——方向一致，但证据只能算倾向，不是定论。
 <span class="so">对你意味着：市场越愿意为保险付钱，之后的收益往往越好。恐惧是燃料。</span></li>
 <li><b>最后：能预测的部分很少</b><span class="tag cite">引用</span><br>
 Balder 把能拿到的输入（隐含波动、多周期实际波动、早盘波动、平值跨式价格）全部放进去，对当日剩余时段的解释力 R² 只有约 0.11，近九成不可预测。
