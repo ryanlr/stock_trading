@@ -333,18 +333,20 @@
  "vrp_n_top": 55,
  "vrp_n": 274,
  "vrp_today_q": 4,
- "vrp_today": 0.025827305722040658,
+ "vrp_today": 0.025827305722040284,
  "n_daily": 5463,
  "n_indep": 273,
  "n_obs_total": 9267,
  "first_date": "1990-01-02",
  "options": {
-  "call_wall": null,
-  "put_wall": null,
-  "flip": null,
-  "gex_spot": 27688576.09192729,
-  "expiries": 2,
-  "rows": 16,
-  "iv_fallback_share": 0.1875
+  "call_wall": 8027.064164953551,
+  "put_wall": 7525.372654643954,
+  "flip": 7736.478038650582,
+  "gex_spot": -88391295191.52501,
+  "expiries": 13,
+  "rows": 2518,
+  "iv_fallback_share": 0.016679904686258934,
+  "source": "SPY",
+  "scale": 10.033830206191938
  }
 }

@@ -89,12 +89,12 @@ footer{padding-block:18px 40px;font-size:12.5px;color:var(--muted)}
 <p>前面问的是“未来 20 个交易日会怎样”；这里看的是期权未平仓量把哪些价位压在当前价格附近。
 状态：<b>负 gamma：做市商对冲会放大波动</b>。</p>
 <div class="tbl"><table>
-<tr><td>看涨墙（现价上方看涨期权未平仓量最大的行权价，常起阻力作用）</td><td class="n"><b>—</b></td></tr>
-<tr><td>Gamma 翻转点（高于此做市商抑制波动，低于此放大波动）</td><td class="n"><b>—</b></td></tr>
-<tr><td>看跌墙（现价下方看跌期权未平仓量最大的行权价，常起支撑作用）</td><td class="n"><b>—</b></td></tr>
+<tr><td>看涨墙（现价上方看涨期权未平仓量最大的行权价，常起阻力作用）</td><td class="n"><b>8,027</b></td></tr>
+<tr><td>Gamma 翻转点（高于此做市商抑制波动，低于此放大波动）</td><td class="n"><b>7,736</b></td></tr>
+<tr><td>看跌墙（现价下方看跌期权未平仓量最大的行权价，常起支撑作用）</td><td class="n"><b>7,525</b></td></tr>
 </table></div>
-<p class="note">数据：SPX 期权链（Yahoo Finance），35 天内的 2 个到期日，未平仓量为交易所上一交易日公布值；
-gamma 用 Black-Scholes 由隐含波动率估算（19% 的合约因报价隐含波动率不可用而改用 VIX 水平），并假设做市商持有看涨多头、看跌空头的常用惯例——这是近似，不是做市商真实持仓。</p>
+<p class="note">数据：SPY 期权链（SPX 期权链数据不足，按 SPX/SPY 价格比 10.03 折算成 SPX 点位）（Yahoo Finance），35 天内的 13 个到期日，未平仓量为交易所上一交易日公布值；
+gamma 用 Black-Scholes 由隐含波动率估算（2% 的合约因报价隐含波动率不可用而改用 VIX 水平），并假设做市商持有看涨多头、看跌空头的常用惯例——这是近似，不是做市商真实持仓。</p>
 </section>
 <section aria-labelledby="s-led"><h2 id="s-led">区间账本：每天都记，错了也记</h2>
 <p>2006 年以来逐日样本外检验：50% 区间实际覆盖 <b>50.2%</b>，80% 区间覆盖 <b>80.1%</b>。
