@@ -19,7 +19,7 @@ is in `references/balder-analysis.md`. Read it before changing a definition.
 |---|---|---|---|
 | Index daily close, 1990→today | `^GSPC` (NDX: `^NDX`) | recent high, drawdown state, comparable positions, 20-session outcomes, ledger | yes |
 | Volatility index daily close | `^VIX` (NDX: `^VXN`) | next-session range (implied 1-day σ), variance risk premium | yes |
-| Listed option chain, ≤35 days | `^SPX` (NDX: `^NDX`) | call wall, put wall, gamma flip, gamma regime | optional — section is shown as "unavailable" if missing |
+| Listed option chain, ≤35 days | `^SPX`, falling back to `SPY` scaled by SPX/SPY when Yahoo's SPX chain is thin (it usually is) | call wall, put wall, gamma flip, gamma regime | optional — section is shown as "unavailable" if missing |
 | Intraday bars | — | Balder's evidence #1 (martingale) and #7 (R² ≈ 0.11) | not used; those two are cited, not recomputed |
 
 Daily data is cached to `data/gspc_vix_daily.csv` so the script can run `--offline`.

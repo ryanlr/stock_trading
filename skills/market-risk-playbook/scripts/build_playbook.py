@@ -99,8 +99,32 @@ def load_prices(index_sym: str, vol_sym: str, cache_dir: str, offline: bool) -> 
     return df.sort_index()
 
 
-def option_structure(spot: float, symbol: str = "^SPX", max_days: int = 35, flat_iv: float = 0.18) -> dict | None:
-    """Call wall, put wall and gamma flip from the listed option chain (open interest)."""
+def option_structure(spot: float, symbol: str = "^SPX", max_days: int = 35, flat_iv: float = 0.18,
+                     proxy: str = "SPY") -> dict | None:
+    """Option structure from `symbol`; if its chain is thin, from `proxy` scaled to the index."""
+    res = _option_structure(spot, symbol, 1.0, max_days, flat_iv)
+    if res and res["rows"] >= 200 and res["call_wall"] and res["put_wall"]:
+        res["source"] = symbol
+        return res
+    if not proxy:
+        return res
+    try:
+        import yfinance as yf  # noqa: WPS433
+        px = float(yf.Ticker(proxy).history(period="5d")["Close"].dropna().iloc[-1])
+        scale = spot / px
+    except Exception as e:  # pragma: no cover
+        print(f"[warn] proxy price unavailable: {e}", file=sys.stderr)
+        return res
+    alt = _option_structure(spot, proxy, scale, max_days, flat_iv)
+    if alt:
+        alt["source"] = proxy
+        alt["scale"] = scale
+    return alt or res
+
+
+def _option_structure(spot: float, symbol: str, scale: float, max_days: int, flat_iv: float) -> dict | None:
+    """Call wall, put wall and gamma flip from a listed option chain (open interest).
+    Strikes are multiplied by `scale` (1 for the index itself, index/ETF price for a proxy)."""
     try:
         import yfinance as yf  # noqa: WPS433
         tk = yf.Ticker(symbol)
@@ -118,6 +142,7 @@ def option_structure(spot: float, symbol: str = "^SPX", max_days: int = 35, flat
         if not rows:
             return None
         oc = pd.concat(rows)
+        oc["strike"] = oc["strike"] * scale
         oc = oc[oc.openInterest.fillna(0) > 0]
         oc = oc[oc.strike.between(spot * 0.85, spot * 1.15)].copy()
         if oc.empty:
@@ -449,8 +474,10 @@ def render(res: dict, opt: dict | None, intraday: bool, index_name: str, ga: str
         f"<td class='n'>{pth['n']:,}</td></tr>" for pth in res["paths"])
 
     if opt:
-        regime = ("正 gamma：做市商对冲会抑制波动" if opt["flip"] and P > opt["flip"]
-                  else "负 gamma：做市商对冲会放大波动")
+        positive = (P > opt["flip"]) if opt["flip"] else (opt["gex_spot"] > 0)
+        regime = "正 gamma：做市商对冲会抑制波动" if positive else "负 gamma：做市商对冲会放大波动"
+        src = ("SPX 期权链" if opt.get("source", "^SPX") == "^SPX" else
+               f"{opt['source']} 期权链（SPX 期权链数据不足，按 SPX/{opt['source']} 价格比 {opt.get('scale', 1):.2f} 折算成 SPX 点位）")
         opt_html = f"""
 <section aria-labelledby="s-opt"><h2 id="s-opt">今日期权结构（第二个视角）</h2>
 <p>前面问的是“未来 20 个交易日会怎样”；这里看的是期权未平仓量把哪些价位压在当前价格附近。
@@ -460,7 +487,7 @@ def render(res: dict, opt: dict | None, intraday: bool, index_name: str, ga: str
 <tr><td>Gamma 翻转点（高于此做市商抑制波动，低于此放大波动）</td><td class="n"><b>{f0(opt['flip']) if opt['flip'] else '—'}</b></td></tr>
 <tr><td>看跌墙（现价下方看跌期权未平仓量最大的行权价，常起支撑作用）</td><td class="n"><b>{f0(opt['put_wall']) if opt['put_wall'] else '—'}</b></td></tr>
 </table></div>
-<p class="note">数据：SPX 期权链（Yahoo Finance），35 天内的 {opt['expiries']} 个到期日，未平仓量为交易所上一交易日公布值；
+<p class="note">数据：{e(src)}（Yahoo Finance），35 天内的 {opt['expiries']} 个到期日，未平仓量为交易所上一交易日公布值；
 gamma 用 Black-Scholes 由隐含波动率估算（{opt['iv_fallback_share']:.0%} 的合约因报价隐含波动率不可用而改用 VIX 水平），并假设做市商持有看涨多头、看跌空头的常用惯例——这是近似，不是做市商真实持仓。</p>
 </section>"""
     else:
