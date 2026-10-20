@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2G0J05CN16"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-2G0J05CN16');</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美股板块三个月走势 · 老王看美股</title>
+<meta name="description" content="12 个美股板块（行业 ETF）2026-07-17 至 2026-10-19 的每日走势：累计涨跌幅叠在一张图上，附区间排名、每个板块的前 5 大持仓和日收盘价小图。">
+<meta property="og:title" content="美股板块三个月走势：能源领涨，公用事业垫底">
+<meta property="og:description" content="7月17日→10月19日：能源 XLE +17.5%、医疗 +9.0%；公用事业 −8.4%、工业 −7.1%。12 个板块 5 涨 7 跌。">
+<meta property="og:image" content="https://ryanlr.github.io/stock_trading/assets/zoom_out.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: sector trend report. Same shell as prediction.html (top bar → hero with tiles → white sections → footer).
+   Light only (owner prefers light). Up = red, down = green, as elsewhere on the site. */
+:root{--paper:#F5F7FA;--sheet:#FFFFFF;--ink:#0F2240;--text:#1C2B3D;--muted:#5B6875;--rule:#D9E0E7;--grid:#EDF1F5;
+--axis:#B8C2CC;--ref:#8A96A3;--blue:#1B86B8;--amber:#D9840F;--link:#1E3A5F;--up:#D64545;--dn:#1E9E6A;
+--display:"Noto Serif SC","Songti SC",serif;--body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--body);font-size:15.5px;line-height:1.7}
+a{color:var(--link)}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:16px}
+.bar{border-bottom:1px solid var(--rule);background:var(--sheet)}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px;font-size:14px}
+.bar a{text-decoration:none;color:var(--muted)}.bar a.home{color:var(--ink);font-weight:700}
+header.hero{padding-block:30px 6px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--blue)}
+h1{font-family:var(--display);font-weight:900;color:var(--ink);font-size:clamp(28px,4.4vw,42px);line-height:1.2;margin:.25em 0 .4em}
+h2{font-family:var(--display);font-weight:600;font-size:23px;color:var(--ink);margin:0 0 10px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.lede{font-size:17px;max-width:78ch;margin:0}.lede b{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:20px 0 6px}
+.tiles div{background:var(--sheet);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tiles b{font-family:var(--mono);font-size:21px;font-weight:600;color:var(--ink)}
+.tiles span{font-size:12.5px;color:var(--muted)}
+section{background:var(--sheet);border:1px solid var(--rule);padding:20px 20px 16px;margin:18px 0}
+.note{font-size:13px;color:var(--muted);margin:0 0 10px;max-width:90ch}
+.pos{color:var(--up)}.neg{color:var(--dn)}
+button:focus-visible,.chartbox:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border:1px solid var(--rule);border-radius:999px;background:var(--sheet);color:var(--text);font:inherit;font-size:12.5px;line-height:1.5;cursor:pointer}
+.chip:hover{border-color:var(--ref)}
+.chip[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.chip.dim{opacity:.5}
+.chip .v{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.chip.all{color:var(--muted)}
+.chartbox{position:relative;min-height:300px}
+.chartbox svg{display:block;width:100%;height:auto}
+.ax{font:11px var(--mono);fill:var(--muted)}
+.endlb{font:12px var(--body);fill:var(--ink)}
+.tip{position:absolute;top:0;left:0;display:none;pointer-events:none;z-index:3;background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--ink);box-shadow:0 6px 18px rgba(15,34,64,.14);font-size:12.5px;line-height:1.55;padding:6px 10px}
+.tip .d{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:2px;white-space:nowrap}
+.tip .r{display:grid;grid-template-columns:18px 4.3em auto 5.2em;align-items:center;column-gap:6px}
+.tip.narrow .r{grid-template-columns:18px 4.3em auto}
+.tip .r b{font-family:var(--mono);font-weight:600;color:var(--ink);text-align:right}
+.tip .r span{color:var(--muted);white-space:nowrap}
+.tip .r i{font-style:normal;font-family:var(--mono);color:var(--muted);text-align:right}
+
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:6px 8px;text-align:left;white-space:nowrap}
+thead th{font-size:12.5px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--rule)}
+th button{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer}
+th[aria-sort="descending"] button::after{content:" ↓"}
+th[aria-sort="ascending"] button::after{content:" ↑"}
+th.n,td.n{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+td.sec{font-weight:700;color:var(--ink)}
+td.tk{font-family:var(--mono);font-size:13px;color:var(--muted)}
+tr.main td{border-top:1px solid var(--grid);padding-bottom:1px}
+tr.sub td{padding-top:0;padding-bottom:9px;font-size:12.5px;color:var(--muted);white-space:normal;line-height:1.6}
+tr.sub .lbl{margin-right:8px}
+tr.sub .h{display:inline-block;margin-right:12px;white-space:nowrap}
+tr.sub abbr,.mini .h5 abbr{text-decoration:none;font-family:var(--mono);color:var(--text)}
+tr.sub .w{font-family:var(--mono);font-size:11.5px}
+tr.sub .sum{display:inline-block;font-size:12px}
+
+.multiples{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 20px}
+.mini{min-width:0}
+.mini .top{display:flex;align-items:baseline;gap:6px;font-size:14px;line-height:1.4}
+.mini .top b{color:var(--ink)}
+.mini .top span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.mini .h5{font-size:11.5px;color:var(--muted);line-height:1.5;min-height:3em;margin-top:2px}
+.mini .h5 abbr{margin-right:6px}
+.mini .rd{display:flex;align-items:baseline;gap:8px;font-family:var(--mono);font-size:12.5px;min-height:1.6em}
+.mini .rd .p{color:var(--ink)}
+.mini .rd .dt{margin-left:auto;font-size:11px;color:var(--muted)}
+.mini svg{display:block;width:100%;height:auto;touch-action:pan-y}
+
+ul.notes{margin:0;padding-left:1.2em;font-size:14px}
+ul.notes li{margin:4px 0}
+footer{padding-block:18px 40px;font-size:12.5px;color:var(--muted)}
+footer p{margin:0 0 6px}
+@media (max-width:560px){section{padding:16px 13px}th,td{padding:5px 5px}table{font-size:13px}.wide{display:none}.tiles b{font-size:19px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body>
+<div class="bar"><div class="wrap"><a class="home" href="./">← 老王看美股</a><a href="https://heylaowang.com/ai/">老王看AI</a></div></div>
+<main class="wrap">
+<header class="hero">
+<div class="kicker">美股板块 · 行业 ETF 日收盘价 · 2026-07-17 → 2026-10-19</div>
+<h1>板块三个月走势：能源领涨，公用事业垫底</h1>
+<p class="lede">以 7月17日 收盘为起点，到 10月19日 共 66 个交易日，12 个板块 <b>5 涨 7 跌</b>。<b>能源</b>（XLE）+17.5% 一路领先，10月16日 刚创区间新高；<b>医疗</b>（XLV）+9.0% 次之。科技（XLK）三个月仍有 +5.9%，但从 10月6日 的高点已回落 7.9%。垫底的是 <b>公用事业</b>（XLU）−8.4%、<b>工业</b>（XLI）−7.1%（10月19日 收在区间最低）和基础设施（PAVE）−6.3%。</p>
+<div class="tiles">
+<div><b>5 涨 / 7 跌</b><span>12 个板块三个月涨跌家数</span></div>
+<div><b>+17.5%</b><span>领涨：能源 XLE</span></div>
+<div><b>−8.4%</b><span>垫底：公用事业 XLU</span></div>
+<div><b>−7.9%</b><span>科技 XLK 距 10月6日 高点</span></div>
+</div>
+</header>
+
+<section id="trend" aria-labelledby="trend-h">
+<h2 id="trend-h">12 个板块的累计涨跌幅</h2>
+<p class="note">以 7月17日 收盘价为基准。实线是周期 / 成长板块，虚线是防御板块（医疗、必需消费、公用事业、电信）。点图例只看某几个板块；在图上滑动（或用左右方向键）看每天的涨跌和收盘价。</p>
+<div class="legend" id="legend"></div>
+<div class="chartbox" id="chart" aria-label="各板块累计涨跌幅，左右方向键逐日查看"></div>
+</section>
+
+<section id="ranking" aria-labelledby="ranking-h">
+<h2 id="ranking-h">区间表现与前 5 大持仓</h2>
+<p class="note">默认按三个月涨跌幅排序，点表头换排序。每个板块下面是对应 ETF 的前 5 大持仓和权重（鼠标停在代码上显示公司名）。“含息”用复权价，计入期间分红；“距高点”相对区间内最高收盘价；“最大回撤”是区间内从高点到其后低点的最大跌幅。</p>
+<div class="scroll">
+<table id="rank">
+<thead><tr>
+<th scope="col" data-k="sector"><button type="button">板块</button></th>
+<th scope="col" data-k="ticker"><button type="button">ETF</button></th>
+<th scope="col" class="n" data-k="ret_3m"><button type="button">三个月</button></th>
+<th scope="col" class="n wide" data-k="tr_3m"><button type="button">含息</button></th>
+<th scope="col" class="n" data-k="ret_1m"><button type="button">近一月</button></th>
+<th scope="col" class="n" data-k="from_high"><button type="button">距高点</button></th>
+<th scope="col" class="n wide" data-k="max_dd"><button type="button">最大回撤</button></th>
+<th scope="col" class="n wide" data-k="close"><button type="button">收盘价</button></th>
+</tr></thead>
+<tbody></tbody>
+</table>
+</div>
+</section>
+
+<section id="prices" aria-labelledby="prices-h">
+<h2 id="prices-h">每个板块的日收盘价</h2>
+<p class="note">一格一个 ETF，板块名下面是它的前 5 大持仓。纵轴用同一个涨跌幅刻度，格与格之间的波动幅度可以直接比较；灰色横线是 7月17日 的收盘价。在小图上滑动看当天价格。</p>
+<div class="multiples" id="multiples"></div>
+</section>
+
+<section id="method" aria-labelledby="method-h">
+<h2 id="method-h">口径</h2>
+<ul class="notes">
+<li>每个板块用一只美股 ETF 衡量：科技 XLK、金融 XLF、医疗 XLV、工业 XLI、必需消费 XLP、能源 XLE、原材料 XLB、公用事业 XLU 用 State Street 的 SPDR 行业 ETF；消费品用可选消费 XLY，消费服务用标普零售 XRT，电信用 iShares 美国电信 IYZ，基础设施用 Global X 美国基建 PAVE。</li>
+<li>涨跌幅按每日收盘价、以 7月17日 收盘为基准计算，未做分红调整，所以除息日（多数在 9 月 21 日）高股息板块的收盘价会小幅下跳；表中“含息”一列用复权价，计入了分红。</li>
+<li>前 5 大持仓和权重来自 StockAnalysis，数据日期 2026-10-16（PAVE 为 10-15），之后可能有调整。XRT 和 PAVE 接近等权，前 5 只合计分别只占 8.5% 和 17.3%，代表性有限；IYZ 持仓里的 SPCX 是 SpaceX。</li>
+</ul>
+</section>
+
+<footer>
+<p><b>数据</b>：12 只 ETF 的日收盘价与复权收盘价来自 Yahoo Finance（2026-07-17 至 2026-10-19）；前 5 大持仓来自 <a href="https://stockanalysis.com/etf/xlk/holdings/" rel="noopener">StockAnalysis</a>。数据内嵌在本页，不自动更新。</p>
+<p>仅作信息整理，不构成投资建议。</p>
+</footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var D = {"dates":["2026-07-17","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14","2026-08-17","2026-08-18","2026-08-19","2026-08-20","2026-08-21","2026-08-24","2026-08-25","2026-08-26","2026-08-27","2026-08-28","2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-18","2026-09-21","2026-09-22","2026-09-23","2026-09-24","2026-09-25","2026-09-28","2026-09-29","2026-09-30","2026-10-01","2026-10-02","2026-10-05","2026-10-06","2026-10-07","2026-10-08","2026-10-09","2026-10-12","2026-10-13","2026-10-14","2026-10-15","2026-10-16","2026-10-19"],"order":["XLE","XLV","XLK","XLP","XLB","XLY","XLF","IYZ","XRT","PAVE","XLI","XLU"],"series":{"XLK":{"sector":"科技","etf":"科技 SPDR","close":[175.59,175.71,180.78,180.27,178.45,175.88,174.3,171.09,166.57,175.73,175.35,178.04,186.9,185.91,185.33,187.97,186.32,186.09,188.86,190.77,190.01,190.32,185.62,183.64,183.1,183.31,180.05,181.74,182.84,188.61,185.69,186.5,183.64,183.6,185.97,187.28,187.87,187.87,185.22,187.67,184.28,183.74,183.93,188.06,189.6,194.85,196.27,195.34,194.71,196.27,194.53,194.5,195.75,197.81,199.81,200.93,202.0,201.39,197.78,198.78,196.36,196.28,190.43,189.19,183.47,185.96],"adj":[175.3853,175.5052,180.5693,180.0599,178.242,175.675,174.0968,170.8906,166.3759,175.5252,175.1456,177.8325,186.6821,185.6933,185.114,187.7509,186.1028,185.8731,188.6399,190.5476,189.7885,190.0982,185.4036,183.4259,182.8866,183.0963,179.8401,181.5282,182.6269,188.3902,185.4736,186.2826,183.4259,183.386,185.7532,187.0617,187.651,187.651,185.0041,187.4512,184.0652,183.5258,183.7156,187.8408,189.379,194.85,196.27,195.34,194.71,196.27,194.53,194.5,195.75,197.81,199.81,200.93,202.0,201.39,197.78,198.78,196.36,196.28,190.43,189.19,183.47,185.96],"stats":{"close":185.96,"ret_3m":0.05905803291759204,"tr_3m":0.06029410674668867,"ret_1m":-0.019198312236286874,"from_high":-0.07940594059405937,"max_dd":-0.0917326732673267,"high_date":"2026-10-06","low_date":"2026-07-29"},"top5":[["NVDA","NVIDIA Corporation",15.45],["AAPL","Apple Inc.",14.94],["MSFT","Microsoft Corporation",11.71],["AVGO","Broadcom Inc.",4.66],["AMD","Advanced Micro Devices, Inc.",4.66]],"top5sum":51.42},"XLF":{"sector":"金融","etf":"金融 SPDR","close":[56.26,56.04,56.11,56.05,55.83,56.31,56.88,57.6,56.68,57.0,56.94,57.38,57.88,58.0,57.81,57.6,57.81,57.8,57.92,58.26,58.16,57.58,57.84,57.48,56.95,57.48,58.22,58.31,58.26,57.88,58.1,57.71,57.2,57.66,58.56,58.1,57.3,57.06,56.87,57.25,57.03,56.85,55.93,55.88,55.86,55.9,54.8,54.54,54.53,54.84,54.19,54.01,53.4,53.46,53.49,53.88,54.01,53.75,54.23,54.73,55.05,54.82,54.52,55.27,55.52,55.06],"adj":[56.0616,55.8424,55.9121,55.8523,55.6331,56.1114,56.6794,57.3969,56.4801,56.799,56.7392,57.1776,57.6759,57.7955,57.6061,57.3969,57.6061,57.5962,57.7157,58.0545,57.9549,57.3769,57.636,57.2773,56.7492,57.2773,58.0147,58.1044,58.0545,57.6759,57.8951,57.5065,56.9983,57.4566,58.3535,57.8951,57.0979,56.8588,56.6694,57.0481,56.8289,56.6495,55.7328,55.6829,55.663,55.9,54.8,54.54,54.53,54.84,54.19,54.01,53.4,53.46,53.49,53.88,54.01,53.75,54.23,54.73,55.05,54.82,54.52,55.27,55.52,55.06],"stats":{"close":55.06,"ret_3m":-0.021329541414859543,"tr_3m":-0.01786606161793447,"ret_1m":-0.014321518080916529,"from_high":-0.05976775956284153,"max_dd":-0.08811475409836067,"high_date":"2026-09-03","low_date":"2026-09-30"},"top5":[["BRK.B","Berkshire Hathaway Inc.",12.65],["JPM","JPMorgan Chase & Co.",11.53],["V","Visa Inc.",8.76],["MA","Mastercard Incorporated",6.38],["BAC","Bank of America Corporation",4.25]],"top5sum":43.57},"XLV":{"sector":"医疗","etf":"医疗 SPDR","close":[161.09,159.25,160.25,159.43,161.44,162.57,163.4,167.26,166.24,163.52,162.55,162.24,162.1,164.16,164.45,165.68,168.44,168.01,168.44,168.38,167.37,167.05,169.73,175.68,172.39,174.62,174.7,175.29,173.54,171.58,171.16,170.54,171.67,172.95,173.26,171.45,167.13,166.58,165.66,165.36,167.75,167.66,167.77,168.81,168.39,169.01,169.89,168.8,169.87,170.7,171.26,170.73,168.42,166.2,166.18,167.37,167.09,168.81,168.16,170.81,171.99,169.66,173.96,177.19,176.71,175.65],"adj":[160.4758,158.6429,159.639,158.8222,160.8245,161.9502,162.777,166.6223,165.6062,162.8966,161.9303,161.6215,161.482,163.5341,163.823,165.0483,167.7978,167.3694,167.7978,167.7381,166.7319,166.4131,169.0829,175.0102,171.7328,173.9543,174.034,174.6217,172.8784,170.9258,170.5074,169.8898,171.0155,172.2906,172.5994,170.7963,166.4928,165.9449,165.0284,164.7296,167.1104,167.0208,167.1304,168.1664,167.748,169.01,169.89,168.8,169.87,170.7,171.26,170.73,168.42,166.2,166.18,167.37,167.09,168.81,168.16,170.81,171.99,169.66,173.96,177.19,176.71,175.65],"stats":{"close":175.65,"ret_3m":0.09038425724750132,"tr_3m":0.09455755945756317,"ret_1m":0.04311419918047399,"from_high":-0.008691235397031427,"max_dd":-0.058743169398907114,"high_date":"2026-10-15","low_date":"2026-07-20"},"top5":[["LLY","Eli Lilly and Company",15.66],["JNJ","Johnson & Johnson",9.59],["ABBV","AbbVie Inc.",7.85],["UNH","UnitedHealth Group Incorporated",5.61],["MRK","Merck & Co., Inc.",5.61]],"top5sum":44.32},"XLY":{"sector":"消费品","etf":"可选消费 SPDR","close":[115.44,114.61,114.87,114.02,108.76,109.41,110.84,112.48,111.61,112.39,116.09,118.21,118.29,118.64,118.1,119.86,119.67,119.24,117.89,118.45,118.2,116.75,116.36,118.59,116.68,118.02,118.3,117.95,117.16,115.88,117.21,116.59,114.59,114.86,116.46,114.91,113.99,112.46,111.96,112.96,112.85,110.88,110.18,111.39,111.03,112.23,112.33,110.65,110.32,110.56,109.0,109.15,108.84,108.81,110.04,110.42,111.72,111.36,111.71,112.85,112.27,112.36,111.5,113.41,112.46,114.46],"adj":[115.1863,114.3581,114.6176,113.7694,108.521,109.1696,110.5964,112.2328,111.3647,112.143,115.8349,117.9502,118.03,118.3793,117.8405,119.5966,119.407,118.978,117.6309,118.1897,117.9402,116.4934,116.1043,118.3294,116.4236,117.7606,118.04,117.6908,116.9025,115.6253,116.9524,116.3338,114.3382,114.6076,116.2041,114.6575,113.7395,112.2129,111.714,112.7118,112.602,110.6363,109.9379,111.1452,110.786,112.23,112.33,110.65,110.32,110.56,109.0,109.15,108.84,108.81,110.04,110.42,111.72,111.36,111.71,112.85,112.27,112.36,111.5,113.41,112.46,114.46],"stats":{"close":114.46,"ret_3m":-0.008489258489258522,"tr_3m":-0.00630543736538125,"ret_1m":0.03089255156264059,"from_high":-0.045052561321541895,"max_dd":-0.09219088937093278,"high_date":"2026-08-07","low_date":"2026-07-23"},"top5":[["AMZN","Amazon.com, Inc.",22.71],["TSLA","Tesla, Inc.",17.09],["HD","The Home Depot, Inc.",5.28],["TJX","The TJX Companies, Inc.",4.39],["MCD","McDonald's Corporation",4.3]],"top5sum":53.77},"XLI":{"sector":"工业","etf":"工业 SPDR","close":[179.41,178.12,178.66,178.85,181.94,182.66,183.2,182.49,176.66,178.39,179.84,183.16,186.4,186.35,184.76,185.18,184.6,185.7,185.88,185.79,186.51,186.32,183.57,181.95,179.77,180.25,179.0,178.4,180.34,178.8,177.14,175.13,172.73,172.78,174.56,175.27,174.42,171.79,170.55,172.37,169.93,168.85,168.71,169.01,169.75,169.98,170.27,170.1,168.83,170.43,168.78,169.13,166.98,168.64,169.95,170.1,171.58,167.84,168.4,169.25,169.15,168.67,167.04,167.89,167.76,166.68],"adj":[178.9291,177.6426,178.1811,178.3706,181.4523,182.1704,182.7089,182.0009,176.1865,177.9118,179.358,182.6691,185.9004,185.8505,184.2648,184.6836,184.1052,185.2022,185.3818,185.292,186.0101,185.8206,183.078,181.4623,179.2881,179.7669,178.5202,177.9218,179.8566,178.3207,176.6652,174.6606,172.267,172.3169,174.0921,174.8002,173.9525,171.3295,170.0928,171.908,169.4745,168.3974,168.2578,168.557,169.295,169.98,170.27,170.1,168.83,170.43,168.78,169.13,166.98,168.64,169.95,170.1,171.58,167.84,168.4,169.25,169.15,168.67,167.04,167.89,167.76,166.68],"stats":{"close":166.68,"ret_3m":-0.07095479627668466,"tr_3m":-0.06845784168142577,"ret_1m":-0.018085419734904185,"from_high":-0.10632137686987286,"max_dd":-0.10632137686987286,"high_date":"2026-08-14","low_date":"2026-10-19"},"top5":[["CAT","Caterpillar Inc.",6.29],["GE","GE Aerospace",6.09],["RTX","RTX Corporation",4.89],["GEV","GE Vernova Inc.",4.59],["UNP","Union Pacific Corporation",3.21]],"top5sum":25.07},"IYZ":{"sector":"电信","etf":"iShares 美国电信","close":[40.11,40.02,40.83,40.76,40.44,40.43,40.58,40.79,39.71,40.39,41.14,41.87,43.35,42.97,43.4,43.6,43.44,43.66,44.79,43.9,43.81,43.97,43.14,42.85,42.56,43.04,42.6,43.16,43.73,43.39,43.05,43.12,42.59,42.7,42.67,42.69,43.17,42.39,42.15,43.26,42.39,42.32,42.07,42.08,41.91,42.45,41.76,41.34,41.49,41.58,41.17,41.18,41.18,41.61,42.57,42.93,44.17,43.8,42.99,42.67,41.78,41.49,40.54,39.99,39.1,39.17],"adj":[39.9416,39.852,40.6586,40.5888,40.2702,40.2602,40.4096,40.6187,39.5433,40.2204,40.9673,41.6942,43.168,42.7896,43.2178,43.4169,43.2576,43.4767,44.6019,43.7157,43.626,43.7854,42.9589,42.6701,42.3813,42.8593,42.4211,42.9788,43.5464,43.2078,42.8692,42.9389,42.4112,42.5207,42.4908,42.5107,42.9887,42.212,41.973,43.0783,42.212,42.32,42.07,42.08,41.91,42.45,41.76,41.34,41.49,41.58,41.17,41.18,41.18,41.61,42.57,42.93,44.17,43.8,42.99,42.67,41.78,41.49,40.54,39.99,39.1,39.17],"stats":{"close":39.17,"ret_3m":-0.023435552231363732,"tr_3m":-0.019318204578684828,"ret_1m":-0.06537819136244316,"from_high":-0.1254744362580933,"max_dd":-0.12703728510828305,"high_date":"2026-08-12","low_date":"2026-10-16"},"top5":[["CSCO","Cisco Systems, Inc.",23.82],["VZ","Verizon Communications Inc.",11.09],["ANET","Arista Networks, Inc.",10.96],["T","AT&T Inc.",4.53],["SPCX","Space Exploration Technologies Corp.",3.86]],"top5sum":54.26},"XRT":{"sector":"消费服务","etf":"SPDR 标普零售","close":[89.42,88.94,88.46,88.74,86.38,87.01,89.54,91.52,91.4,90.58,89.78,91.46,92.35,91.42,89.85,90.82,90.59,89.63,88.78,89.29,88.95,87.54,87.13,88.83,86.73,87.71,88.85,87.89,88.23,86.59,86.89,86.1,85.92,86.38,86.73,87.59,85.7,84.3,83.63,84.79,85.52,83.22,82.73,82.82,82.03,82.56,83.67,82.1,82.1,82.47,82.55,82.47,82.15,82.62,82.63,82.92,82.95,82.91,83.91,84.09,84.15,84.33,84.7,87.82,87.02,86.82],"adj":[89.2314,88.7524,88.2734,88.5528,86.1978,86.8265,89.3512,91.327,91.2072,90.389,89.5907,91.2671,92.1552,91.2272,89.6605,90.6285,90.3989,89.441,88.5928,89.1017,88.7624,87.3554,86.9462,88.6427,86.5471,87.525,88.6626,87.7046,88.0439,86.4074,86.7067,85.9184,85.7388,86.1978,86.5471,87.4053,85.5193,84.1222,83.4536,84.6112,85.3396,83.0445,82.5555,82.6453,81.857,82.56,83.67,82.1,82.1,82.47,82.55,82.47,82.15,82.62,82.63,82.92,82.95,82.91,83.91,84.09,84.15,84.33,84.7,87.82,87.02,86.82],"stats":{"close":86.82,"ret_3m":-0.0290762692909865,"tr_3m":-0.02702411931226001,"ret_1m":0.05839327075460177,"from_high":-0.05988088792636714,"max_dd":-0.1117487818083378,"high_date":"2026-08-04","low_date":"2026-09-18"},"top5":[["GME","GameStop Corp.",1.84],["OLLI","Ollie's Bargain Outlet Holdings, Inc.",1.76],["KSS","Kohl's Corporation",1.69],["ETSY","Etsy, Inc.",1.64],["RVLV","Revolve Group, Inc.",1.6]],"top5sum":8.53},"XLP":{"sector":"必需消费","etf":"必需消费 SPDR","close":[85.19,84.86,84.06,84.38,83.21,84.13,85.36,87.06,87.36,85.47,85.05,84.86,85.37,85.33,85.11,85.12,84.95,84.69,85.08,86.0,86.09,84.68,85.58,86.54,85.32,85.99,87.45,86.52,86.27,85.08,85.45,84.98,85.25,85.53,85.26,84.58,84.02,83.05,83.09,83.38,84.42,83.73,83.33,83.49,82.8,81.92,82.73,82.43,81.7,82.06,82.28,81.85,80.6,80.33,80.53,81.04,81.8,81.7,83.42,83.43,84.41,84.19,86.06,86.68,87.62,87.21],"adj":[84.6334,84.3055,83.5108,83.8287,82.6663,83.5803,84.8023,86.4912,86.7892,84.9116,84.4943,84.3055,84.8122,84.7725,84.5539,84.5638,84.395,84.1367,84.5241,85.4381,85.5275,84.1267,85.0208,85.9746,84.7625,85.4282,86.8786,85.9547,85.7063,84.5241,84.8917,84.4248,84.693,84.9712,84.7029,84.0274,83.471,82.5074,82.5471,82.8352,83.8684,83.1829,82.7855,82.9445,82.259,81.92,82.73,82.43,81.7,82.06,82.28,81.85,80.6,80.33,80.53,81.04,81.8,81.7,83.42,83.43,84.41,84.19,86.06,86.68,87.62,87.21],"stats":{"close":87.21,"ret_3m":0.02371170325155525,"tr_3m":0.030444245416112237,"ret_1m":0.05326086956521725,"from_high":-0.004679296964163582,"max_dd":-0.08141795311606637,"high_date":"2026-10-16","low_date":"2026-10-01"},"top5":[["WMT","Walmart Inc.",10.91],["COST","Costco Wholesale Corporation",9.04],["PG","The Procter & Gamble Company",7.63],["KO","The Coca-Cola Company",7.49],["PM","Philip Morris International Inc.",6.59]],"top5sum":41.66},"XLE":{"sector":"能源","etf":"能源 SPDR","close":[57.68,57.94,58.5,59.2,59.38,59.62,58.36,57.57,58.65,58.96,59.55,58.79,58.52,57.31,58.16,57.5,60.18,60.93,61.03,61.06,61.91,62.58,63.68,63.58,63.75,63.64,63.11,62.06,62.43,62.29,62.68,63.96,64.77,65.1,64.62,64.06,64.77,65.31,64.93,65.14,64.53,65.93,64.03,64.48,64.31,62.46,61.78,62.37,62.6,62.04,62.1,61.54,61.5,62.7,62.82,63.45,63.75,63.36,65.24,65.08,66.01,67.2,67.63,66.56,68.24,67.8],"adj":[57.3392,57.5976,58.1543,58.8502,59.0291,59.2677,58.0152,57.2298,58.3034,58.6116,59.1981,58.4426,58.1742,56.9714,57.8163,57.1602,59.8244,60.57,60.6694,60.6992,61.5442,62.2102,63.3037,63.2043,63.3733,63.264,62.7371,61.6933,62.0611,61.9219,62.3096,63.5821,64.3873,64.7153,64.2382,63.6815,64.3873,64.9241,64.5463,64.7551,64.1487,65.5404,63.6517,64.099,63.93,62.46,61.78,62.37,62.6,62.04,62.1,61.54,61.5,62.7,62.82,63.45,63.75,63.36,65.24,65.08,66.01,67.2,67.63,66.56,68.24,67.8],"stats":{"close":67.8,"ret_3m":0.17545076282940353,"tr_3m":0.18243714596645932,"ret_1m":0.05426838749805629,"from_high":-0.00644783118405623,"max_dd":-0.06719247686940699,"high_date":"2026-10-16","low_date":"2026-08-05"},"top5":[["XOM","ExxonMobil Holdings Corporation",23.81],["CVX","Chevron Corporation",17.92],["COP","ConocoPhillips",7.09],["MPC","Marathon Petroleum Corporation",5.12],["VLO","Valero Energy Corporation",4.89]],"top5sum":58.83},"XLB":{"sector":"原材料","etf":"原材料 SPDR","close":[50.53,50.03,50.1,50.82,50.29,51.26,51.39,52.34,51.74,51.64,50.43,51.01,52.0,52.64,52.17,52.86,53.18,53.24,52.58,52.31,52.54,52.24,51.78,52.52,52.42,53.54,53.58,53.58,53.67,53.23,53.18,52.69,52.07,52.95,52.62,52.44,51.94,51.39,50.76,50.95,50.49,50.73,50.36,50.71,49.99,49.71,50.53,50.28,49.68,49.8,49.47,49.1,48.7,48.54,48.86,49.5,49.73,48.98,49.27,49.43,49.44,49.72,49.67,50.56,50.92,50.95],"adj":[50.2985,49.8008,49.8705,50.5872,50.0596,51.0252,51.1546,52.1002,51.503,51.4034,50.199,50.7763,51.7618,52.3989,51.931,52.6179,52.9364,52.9961,52.3391,52.0704,52.2993,52.0007,51.5428,52.2794,52.1799,53.2947,53.3346,53.3346,53.4241,52.9862,52.9364,52.4486,51.8315,52.7074,52.379,52.1998,51.7021,51.1546,50.5275,50.7166,50.2587,50.4976,50.1293,50.4777,49.761,49.71,50.53,50.28,49.68,49.8,49.47,49.1,48.7,48.54,48.86,49.5,49.73,48.98,49.27,49.43,49.44,49.72,49.67,50.56,50.92,50.95],"stats":{"close":50.95,"ret_3m":0.008311893924401348,"tr_3m":0.012952672544906951,"ret_1m":0.019203840768153624,"from_high":-0.050680081982485525,"max_dd":-0.09558412520961435,"high_date":"2026-08-26","low_date":"2026-10-01"},"top5":[["LIN","Linde plc",12.92],["NEM","Newmont Corporation",7.03],["FCX","Freeport-McMoRan Inc.",5.62],["ECL","Ecolab Inc.",5.03],["SHW","The Sherwin-Williams Company",4.95]],"top5sum":35.55},"XLU":{"sector":"公用事业","etf":"公用事业 SPDR","close":[45.17,44.94,44.92,45.93,46.19,46.29,45.68,45.52,44.91,44.66,44.35,44.36,44.11,43.66,43.38,43.61,43.13,43.63,43.84,44.04,44.31,44.18,44.02,44.02,43.77,42.77,43.22,43.31,43.51,43.18,42.73,42.23,42.56,42.67,43.03,43.08,43.45,42.94,42.52,42.39,41.82,41.32,41.32,41.69,41.1,40.66,40.53,39.75,39.36,39.51,39.25,39.71,39.44,39.68,39.83,39.97,41.16,41.15,41.07,41.41,41.63,41.87,41.72,41.65,42.21,41.36],"adj":[44.8403,44.612,44.5921,45.5947,45.8528,45.9521,45.3466,45.1877,44.5822,44.334,44.0263,44.0362,43.788,43.3413,43.0634,43.2917,42.8152,43.3115,43.52,43.7185,43.9866,43.8575,43.6987,43.6987,43.4505,42.4578,42.9045,42.9939,43.1924,42.8648,42.4181,41.9218,42.2493,42.3585,42.7159,42.7655,43.1328,42.6266,42.2096,42.0806,41.5147,41.0184,41.0184,41.3857,40.8,40.66,40.53,39.75,39.36,39.51,39.25,39.71,39.44,39.68,39.83,39.97,41.16,41.15,41.07,41.41,41.63,41.87,41.72,41.65,42.21,41.36],"stats":{"close":41.36,"ret_3m":-0.08434801859641361,"tr_3m":-0.07761544860315384,"ret_1m":0.006326034063260266,"from_high":-0.10650248433786991,"max_dd":-0.15208468351695825,"high_date":"2026-07-24","low_date":"2026-09-28"},"top5":[["NEE","NextEra Energy, Inc.",12.54],["SO","The Southern Company",7.9],["DUK","Duke Energy Corporation",7.13],["CEG","Constellation Energy Corporation",6.74],["AEP","American Electric Power Company, Inc.",5.21]],"top5sum":39.52},"PAVE":{"sector":"基础设施","etf":"Global X 美国基建","close":[56.3,55.7,56.2,56.6,57.51,57.69,57.48,57.1,54.99,56.1,56.36,57.54,58.58,58.65,58.35,58.69,58.3,58.7,58.49,58.31,58.59,58.73,57.31,56.78,56.04,56.39,55.92,55.63,56.21,56.06,55.31,54.7,53.92,54.28,54.69,55.16,54.81,54.19,53.36,54.08,53.02,52.84,52.75,52.91,52.96,53.08,53.57,53.39,53.07,53.47,53.08,52.91,52.5,53.04,53.88,54.11,54.65,53.29,53.25,53.45,53.37,53.54,52.82,52.95,52.78,52.77],"adj":[56.3,55.7,56.2,56.6,57.51,57.69,57.48,57.1,54.99,56.1,56.36,57.54,58.58,58.65,58.35,58.69,58.3,58.7,58.49,58.31,58.59,58.73,57.31,56.78,56.04,56.39,55.92,55.63,56.21,56.06,55.31,54.7,53.92,54.28,54.69,55.16,54.81,54.19,53.36,54.08,53.02,52.84,52.75,52.91,52.96,53.08,53.57,53.39,53.07,53.47,53.08,52.91,52.5,53.04,53.88,54.11,54.65,53.29,53.25,53.45,53.37,53.54,52.82,52.95,52.78,52.77],"stats":{"close":52.77,"ret_3m":-0.06269982238010652,"tr_3m":-0.06269982238010652,"ret_1m":-0.0035876132930513505,"from_high":-0.10148135535501435,"max_dd":-0.1060786650774731,"high_date":"2026-08-17","low_date":"2026-09-30"},"top5":[["EMR","Emerson Electric Co.",3.65],["FAST","Fastenal Company",3.56],["DE","Deere & Company",3.48],["NUE","Nucor Corporation",3.44],["PWR","Quanta Services, Inc.",3.2]],"top5sum":17.33}}};
+  var NS = 'http://www.w3.org/2000/svg';
+  // One identity per sector: 8 validated hues; the 4 defensive sectors reuse a hue with a dashed line.
+  var STYLE = {
+    XLK: ['#2a78d6', false], XLU: ['#2a78d6', true],
+    XLE: ['#eb6834', false], IYZ: ['#eb6834', true],
+    XLF: ['#6250d6', false], XLV: ['#6250d6', true],
+    PAVE: ['#008300', false], XLP: ['#008300', true],
+    XLI: ['#eda100', false], XLY: ['#e87ba4', false],
+    XRT: ['#1baf7a', false], XLB: ['#e34948', false]
+  };
+  var MUTED = '#CBD3DB';
+  var T = D.dates.map(function (s) { return Date.parse(s + 'T00:00:00Z'); });
+  var N = T.length;
+  D.order.forEach(function (t) {
+    var c = D.series[t].close;
+    D.series[t].pct = c.map(function (v) { return v / c[0] - 1; });
+  });
+
+  function colorOf(t) { return STYLE[t][0]; }
+  function dashedOf(t) { return STYLE[t][1]; }
+  function pct(v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v * 100).toFixed(1) + '%'; }
+  function price(v) { return '$' + v.toFixed(2); }
+  function md(ms) { var d = new Date(ms); return (d.getUTCMonth() + 1) + '月' + d.getUTCDate() + '日'; }
+  function svg(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function html(tag, cls, text, parent) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function lin(d0, d1, r0, r1) {
+    var f = function (v) { return r0 + ((v - d0) / (d1 - d0)) * (r1 - r0); };
+    f.invert = function (p) { return d0 + ((p - r0) / (r1 - r0)) * (d1 - d0); };
+    return f;
+  }
+  function nearest(ms) {
+    var lo = 0, hi = N - 1;
+    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (T[mid] <= ms) lo = mid; else hi = mid; }
+    return ms - T[lo] <= T[hi] - ms ? lo : hi;
+  }
+  function lineKey(t, parent) {
+    var s = svg('svg', { width: 18, height: 8, 'aria-hidden': 'true' }, parent);
+    svg('line', { x1: 1, x2: 17, y1: 4, y2: 4, stroke: colorOf(t), 'stroke-width': 2,
+      'stroke-dasharray': dashedOf(t) ? '4 3' : 'none', 'stroke-linecap': dashedOf(t) ? 'butt' : 'round' }, s);
+    return s;
+  }
+  function pctTicks(lo, hi, maxTicks) {
+    var steps = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5], step = 0.5;
+    for (var j = 0; j < steps.length; j++) if ((hi - lo) / steps[j] <= maxTicks) { step = steps[j]; break; }
+    var ka = Math.floor(lo / step + 1e-9), kb = Math.ceil(hi / step - 1e-9), ticks = [];
+    for (var k = ka; k <= kb; k++) ticks.push(+(k * step).toFixed(6));
+    return { lo: ka * step, hi: kb * step, ticks: ticks };
+  }
+  function tickPct(v) { return Math.abs(v) < 1e-9 ? '0%' : (v > 0 ? '+' : '−') + Math.round(Math.abs(v) * 100) + '%'; }
+  function monthTicks(t0, t1, half) {
+    var d0 = new Date(t0), y = d0.getUTCFullYear(), m = d0.getUTCMonth(), out = [];
+    if (Date.UTC(y, m, 1) < t0) m += 1;
+    for (;; m++) {
+      var a = Date.UTC(y, m, 1);
+      if (a > t1) break;
+      out.push(a);
+      if (half && Date.UTC(y, m, 15) <= t1) out.push(Date.UTC(y, m, 15));
+    }
+    return out;
+  }
+  function tickDay(ms) { var d = new Date(ms); return d.getUTCDate() === 1 ? (d.getUTCMonth() + 1) + '月' : (d.getUTCMonth() + 1) + '/' + d.getUTCDate(); }
+  function extent() {
+    var lo = 0, hi = 0;
+    D.order.forEach(function (t) { D.series[t].pct.forEach(function (v) { if (v < lo) lo = v; if (v > hi) hi = v; }); });
+    return [lo, hi];
+  }
+  function pathOf(vals, x, y) {
+    return vals.map(function (v, i) { return (i ? 'L' : 'M') + x(T[i]).toFixed(1) + ',' + y(v).toFixed(1); }).join('');
+  }
+
+  /* ---------- main chart ---------- */
+  var focus = {};
+  var focusCount = function () { return Object.keys(focus).length; };
+  var box = document.getElementById('chart');
+  var legend = document.getElementById('legend');
+  var api = null, tipI = null;
+
+  function toggle(t) { if (focus[t]) delete focus[t]; else focus[t] = true; drawLegend(); drawChart(); }
+
+  function drawLegend() {
+    legend.textContent = '';
+    var any = focusCount() > 0;
+    D.order.forEach(function (t) {
+      var b = html('button', 'chip' + (any && !focus[t] ? ' dim' : ''), null, legend);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', focus[t] ? 'true' : 'false');
+      lineKey(t, b);
+      html('span', null, D.series[t].sector, b);
+      html('span', 'v', pct(D.series[t].stats.ret_3m), b);
+      b.addEventListener('click', function () { toggle(t); });
+    });
+    if (any) {
+      var a = html('button', 'chip all', '显示全部', legend);
+      a.type = 'button';
+      a.addEventListener('click', function () { focus = {}; drawLegend(); drawChart(); });
+    }
+  }
+
+  function drawChart() {
+    api = null; tipI = null;
+    box.textContent = '';
+    var W = box.clientWidth;
+    if (!W) return;
+    var H = Math.round(Math.max(300, Math.min(430, W * 0.6)));
+    var mt = 10, mb = 26, any = focusCount() > 0;
+    var ex = extent();
+    var yt = pctTicks(ex[0], ex[1], Math.max(4, Math.min(9, Math.floor((H - mt - mb) / 30))));
+    var root = svg('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': '各板块累计涨跌幅折线图' }, box);
+
+    var gm = svg('g', { 'class': 'ax' }, root), widest = 0;
+    yt.ticks.forEach(function (v) { var tx = svg('text', {}, gm); tx.textContent = tickPct(v); widest = Math.max(widest, tx.getComputedTextLength()); });
+    root.removeChild(gm);
+    var focused = D.order.filter(function (t) { return focus[t]; });
+    var labels = focused.length && focused.length <= 4 ? focused.map(function (t) {
+      return { t: t, text: D.series[t].sector + ' ' + pct(D.series[t].pct[N - 1]) };
+    }) : [];
+    var gl = svg('g', { 'class': 'endlb' }, root);
+    labels.forEach(function (l) { var tx = svg('text', {}, gl); tx.textContent = l.text; l.w = tx.getComputedTextLength() || l.text.length * 9; });
+    root.removeChild(gl);
+    var ml = Math.ceil(widest || 30) + 10;
+    var mr = labels.length ? Math.ceil(Math.max.apply(null, labels.map(function (l) { return l.w; }))) + 18 : 14;
+    var x = lin(T[0], T[N - 1], ml, W - mr);
+    var y = lin(yt.lo, yt.hi, H - mb, mt);
+
+    yt.ticks.forEach(function (v) {
+      var zero = Math.abs(v) < 1e-9;
+      svg('line', { x1: ml, x2: W - mr, y1: y(v), y2: y(v), stroke: zero ? '#8A96A3' : '#EDF1F5', 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, root);
+      var tx = svg('text', { 'class': 'ax', x: ml - 8, y: y(v), dy: '0.32em', 'text-anchor': 'end' }, root);
+      tx.textContent = tickPct(v);
+    });
+    svg('line', { x1: ml, x2: W - mr, y1: H - mb, y2: H - mb, stroke: '#B8C2CC', 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, root);
+    monthTicks(T[0], T[N - 1], W - ml - mr > 520).filter(function (ms) { return x(ms) - 18 >= 0 && x(ms) + 18 <= W; }).forEach(function (ms) {
+      var tx = svg('text', { 'class': 'ax', x: x(ms), y: H - mb + 17, 'text-anchor': 'middle' }, root);
+      tx.textContent = tickDay(ms);
+    });
+
+    var drawOrder = D.order.slice().sort(function (a, b) { return (focus[a] ? 1 : 0) - (focus[b] ? 1 : 0); });
+    drawOrder.forEach(function (t) {
+      var on = !any || focus[t];
+      svg('path', { d: pathOf(D.series[t].pct, x, y), fill: 'none', stroke: on ? colorOf(t) : MUTED,
+        'stroke-width': any && on ? 2.5 : on ? 2 : 1.5, 'stroke-linejoin': 'round',
+        'stroke-linecap': dashedOf(t) ? 'butt' : 'round', 'stroke-dasharray': dashedOf(t) ? '6 4' : 'none' }, root);
+    });
+
+    if (labels.length) {
+      var placed = labels.map(function (l) { return { t: l.t, text: l.text, y0: y(D.series[l.t].pct[N - 1]) }; })
+        .sort(function (a, b) { return a.y0 - b.y0; });
+      placed.forEach(function (p, i) { p.y = i ? Math.max(p.y0, placed[i - 1].y + 15) : p.y0; });
+      var over = placed[placed.length - 1].y - (H - mb);
+      if (over > 0) placed.forEach(function (p) { p.y = Math.max(mt, p.y - over); });
+      placed.forEach(function (p) {
+        if (Math.abs(p.y - p.y0) > 3) svg('line', { x1: W - mr + 2, x2: W - mr + 7, y1: p.y0, y2: p.y, stroke: '#B8C2CC', 'stroke-width': 1 }, root);
+        svg('circle', { cx: x(T[N - 1]), cy: p.y0, r: 4, fill: colorOf(p.t), stroke: '#fff', 'stroke-width': 2 }, root);
+        var tx = svg('text', { 'class': 'endlb', x: W - mr + 9, y: p.y, dy: '0.32em' }, root);
+        tx.textContent = p.text;
+      });
+    }
+
+    var cross = svg('line', { y1: mt, y2: H - mb, stroke: '#8A96A3', 'stroke-width': 1, display: 'none' }, root);
+    var dots = svg('g', {}, root);
+    var hit = svg('rect', { x: ml, y: mt, width: Math.max(0, W - ml - mr), height: Math.max(0, H - mt - mb), fill: 'transparent' }, root);
+    hit.style.touchAction = 'pan-y';
+    hit.style.cursor = 'crosshair';
+    var tip = html('div', 'tip', null, box);
+    tip.setAttribute('aria-hidden', 'true');
+
+    function show(i) {
+      tipI = i;
+      var cx = x(T[i]);
+      cross.setAttribute('x1', cx); cross.setAttribute('x2', cx); cross.removeAttribute('display');
+      var vis = D.order.filter(function (t) { return !any || focus[t]; })
+        .map(function (t) { return { t: t, v: D.series[t].pct[i], c: D.series[t].close[i] }; })
+        .sort(function (a, b) { return b.v - a.v; });
+      dots.textContent = '';
+      vis.forEach(function (o) { svg('circle', { cx: cx, cy: y(o.v), r: 4, fill: colorOf(o.t), stroke: '#fff', 'stroke-width': 2 }, dots); });
+      var narrow = W < 480;
+      tip.className = narrow ? 'tip narrow' : 'tip';
+      tip.textContent = '';
+      html('div', 'd', md(T[i]) + (narrow ? '' : ' · 较 ' + md(T[0])), tip);
+      vis.forEach(function (o) {
+        var r = html('div', 'r', null, tip);
+        lineKey(o.t, r);
+        html('b', null, pct(o.v), r);
+        html('span', null, D.series[o.t].sector, r);
+        if (!narrow) html('i', null, price(o.c), r);
+      });
+      tip.style.display = 'block';
+      var tw = tip.offsetWidth, th = tip.offsetHeight, left = cx + 14;
+      if (narrow) left = cx > W / 2 ? 0 : W - tw;
+      else if (left + tw > W) left = cx - 14 - tw;
+      tip.style.left = Math.max(0, Math.min(left, W - tw)) + 'px';
+      tip.style.top = Math.max(0, Math.min(mt, H - th)) + 'px';
+    }
+    function hide() { tipI = null; cross.setAttribute('display', 'none'); dots.textContent = ''; tip.style.display = 'none'; }
+    function at(e) { var r = root.getBoundingClientRect(); show(nearest(x.invert((e.clientX - r.left) * (W / r.width)))); }
+    hit.addEventListener('pointermove', at);
+    hit.addEventListener('pointerdown', at);
+    hit.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') hide(); });
+    api = { show: show, hide: hide };
+  }
+
+  box.tabIndex = 0;
+  box.addEventListener('keydown', function (e) {
+    if (!api) return;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      var i = tipI == null ? N - 1 : tipI + (e.key === 'ArrowRight' ? 1 : -1);
+      api.show(Math.max(0, Math.min(N - 1, i)));
+    } else if (e.key === 'Escape') {
+      api.hide();
+    }
+  });
+  box.addEventListener('blur', function () { if (api) api.hide(); });
+  document.addEventListener('pointerdown', function (e) { if (api && !box.contains(e.target)) api.hide(); });
+
+  /* ---------- ranking table with top-5 holdings under each sector ---------- */
+  var table = document.getElementById('rank');
+  var sortK = 'ret_3m', sortD = -1;
+  var COLS = [
+    { k: 'sector', cls: 'sec' }, { k: 'ticker', cls: 'tk' },
+    { k: 'ret_3m', cls: 'n', signed: true }, { k: 'tr_3m', cls: 'n wide', signed: true },
+    { k: 'ret_1m', cls: 'n', signed: true }, { k: 'from_high', cls: 'n' },
+    { k: 'max_dd', cls: 'n wide' }, { k: 'close', cls: 'n wide' }
+  ];
+  function val(t, k) { return k === 'sector' ? D.series[t].sector : k === 'ticker' ? t : D.series[t].stats[k]; }
+  function drawTable() {
+    Array.prototype.forEach.call(table.tHead.rows[0].cells, function (th) {
+      th.setAttribute('aria-sort', th.getAttribute('data-k') === sortK ? (sortD < 0 ? 'descending' : 'ascending') : 'none');
+    });
+    var rows = D.order.slice().sort(function (a, b) {
+      var va = val(a, sortK), vb = val(b, sortK);
+      return (typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb), 'zh')) * sortD;
+    });
+    var tb = table.tBodies[0];
+    tb.textContent = '';
+    rows.forEach(function (t) {
+      var tr = html('tr', 'main', null, tb);
+      COLS.forEach(function (c) {
+        var v = val(t, c.k), td = html('td', c.cls, null, tr);
+        td.textContent = c.k === 'close' ? price(v) : typeof v === 'number' ? pct(v) : v;
+        if (c.signed && v !== 0) td.classList.add(v > 0 ? 'pos' : 'neg');
+      });
+      var sub = html('tr', 'sub', null, tb), td = html('td', null, null, sub);
+      td.colSpan = COLS.length;
+      html('span', 'lbl', '前5大持仓', td);
+      D.series[t].top5.forEach(function (h) {
+        var s = html('span', 'h', null, td), ab = html('abbr', null, h[0], s);
+        ab.title = h[1];
+        html('span', 'w', ' ' + h[2].toFixed(1) + '%', s);
+      });
+      html('span', 'sum', '合计 ' + D.series[t].top5sum.toFixed(1) + '%', td);
+    });
+  }
+  table.tHead.addEventListener('click', function (e) {
+    var th = e.target.closest('th');
+    if (!th) return;
+    var k = th.getAttribute('data-k');
+    if (k === sortK) sortD = -sortD;
+    else { sortK = k; sortD = k === 'sector' || k === 'ticker' ? 1 : -1; }
+    drawTable();
+  });
+
+  /* ---------- small multiples: one ETF per panel, shared % scale, price on hover ---------- */
+  var grid = document.getElementById('multiples');
+  function drawMultiples() {
+    grid.textContent = '';
+    var ex = extent();
+    var panels = D.order.map(function (t) {
+      var s = D.series[t], wrap = html('div', 'mini', null, grid), top = html('div', 'top', null, wrap);
+      html('b', null, s.sector, top);
+      html('span', null, t, top);
+      var h5 = html('div', 'h5', null, wrap);
+      s.top5.forEach(function (h) { var ab = html('abbr', null, h[0], h5); ab.title = h[1] + ' ' + h[2].toFixed(1) + '%'; });
+      var rd = html('div', 'rd', null, wrap);
+      return { t: t, s: s, wrap: wrap, pr: html('span', 'p', null, rd), ch: html('span', null, null, rd), dt: html('span', 'dt', null, rd) };
+    });
+    panels.forEach(function (p) { miniChart(p, ex[0], ex[1]); });
+  }
+  function miniChart(p, lo, hi) {
+    var s = p.s;
+    function setRd(i, withDate) {
+      p.pr.textContent = price(s.close[i]);
+      p.ch.textContent = pct(s.pct[i]);
+      p.ch.className = s.pct[i] > 0 ? 'pos' : s.pct[i] < 0 ? 'neg' : '';
+      p.dt.textContent = withDate ? md(T[i]) : '';
+    }
+    setRd(N - 1, false);
+    var W = p.wrap.clientWidth || 150, H = 64, m = 5, base = s.close[0];
+    var x = lin(T[0], T[N - 1], m, W - m);
+    var y = lin(base * (1 + lo), base * (1 + hi), H - m, m);
+    var root = svg('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': s.sector + ' ' + p.t + ' 日收盘价' }, p.wrap);
+    svg('line', { x1: m, x2: W - m, y1: y(base), y2: y(base), stroke: '#B8C2CC', 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, root);
+    svg('path', { d: pathOf(s.close, x, y), fill: 'none', stroke: colorOf(p.t), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, root);
+    var rule = svg('line', { y1: m, y2: H - m, stroke: '#8A96A3', 'stroke-width': 1, display: 'none' }, root);
+    var dot = svg('circle', { r: 4, cx: x(T[N - 1]), cy: y(s.close[N - 1]), fill: colorOf(p.t), stroke: '#fff', 'stroke-width': 2 }, root);
+    var hit = svg('rect', { width: W, height: H, fill: 'transparent' }, root);
+    function at(e) {
+      var r = root.getBoundingClientRect(), i = nearest(x.invert((e.clientX - r.left) * (W / r.width)));
+      rule.setAttribute('x1', x(T[i])); rule.setAttribute('x2', x(T[i])); rule.removeAttribute('display');
+      dot.setAttribute('cx', x(T[i])); dot.setAttribute('cy', y(s.close[i]));
+      setRd(i, true);
+    }
+    hit.addEventListener('pointermove', at);
+    hit.addEventListener('pointerdown', at);
+    hit.addEventListener('pointerleave', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      rule.setAttribute('display', 'none');
+      dot.setAttribute('cx', x(T[N - 1])); dot.setAttribute('cy', y(s.close[N - 1]));
+      setRd(N - 1, false);
+    });
+  }
+
+  drawLegend();
+  drawTable();
+  drawChart();
+  drawMultiples();
+  var lastW = box.clientWidth;
+  function redraw() { lastW = box.clientWidth; drawChart(); drawMultiples(); }
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () { if (Math.abs(box.clientWidth - lastW) > 2) redraw(); }).observe(box);
+  } else {
+    window.addEventListener('resize', function () { if (Math.abs(box.clientWidth - lastW) > 2) redraw(); });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+})();
+</script>
+</body>
+</html>
