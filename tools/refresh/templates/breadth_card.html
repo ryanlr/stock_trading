@@ -1,0 +1,31 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1920px;height:1080px;background:#F7F9FC;color:#1B2B40;font-family:"Inter","Noto Sans CJK SC",sans-serif;position:relative;overflow:hidden}
+.hd{height:115px;background:#1B2B40;color:#fff;display:flex;align-items:center;padding:0 110px}
+.hd .l{flex:1}.hd .l b{display:block;font-size:30px;font-weight:500}.hd .l span{font-size:22px;opacity:.9}
+.hd .m{flex:1.3;text-align:center;font-size:48px;font-weight:500;letter-spacing:-.5px}
+.hd .r{flex:1;text-align:right;font-size:58px;font-weight:500;color:#9BDCBF}
+h1{font-size:66px;font-weight:600;margin:24px 110px 0;letter-spacing:1px}
+.sub{font-size:32px;color:#6B7785;margin:22px 110px 0}
+hr{border:0;border-top:2px solid #E2E7EE;margin:40px 110px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr 1fr;margin:44px 110px 0}
+.cols .k{font-size:30px;display:flex;align-items:center;gap:14px}.cols .k i{width:16px;height:30px;border-radius:4px;display:inline-block}
+.cols .n{font-size:150px;font-weight:500;line-height:1;margin-top:34px;letter-spacing:-4px}.cols .n small{font-size:32px;letter-spacing:0;margin-left:14px;color:#3B4A5C}
+.bar{display:flex;height:50px;margin:88px 110px 0}
+.msg{font-size:44px;font-weight:500;margin:70px 110px 0}
+.ft{position:absolute;left:110px;right:110px;bottom:40px;border-top:2px solid #E2E7EE;padding-top:26px;font-size:24px;color:#6B7785;line-height:1.85}
+</style></head><body>
+<div class="hd"><div class="l"><b>QQQ · 纳斯达克100</b><span>2025年11月收盘 → {{YM}}收盘</span></div>
+<div class="m">${{Q0}} &nbsp;→&nbsp; ${{Q1}}</div><div class="r">{{QR}}</div></div>
+<h1>2025—2026年：{{TITLE}}</h1>
+<div class="sub">2025年11月 — {{YM}}</div>
+<hr>
+<div class="cols">
+<div><div class="k"><i style="background:#3A7BD5"></i>涨幅超过10%</div><div class="n">{{BIG}}<small>只</small></div></div>
+<div><div class="k"><i style="background:#E3A045"></i>小幅上涨（0%＜涨幅＜10%）</div><div class="n">{{SMALL}}<small>只</small></div></div>
+<div><div class="k"><i style="background:#CE5A66"></i>下跌</div><div class="n">{{DOWN}}<small>只</small></div></div>
+</div>
+<div class="bar"><div style="flex:{{WB}};background:#3A7BD5"></div><div style="flex:{{WS}};background:#E3A045"></div><div style="flex:{{WD}};background:#CE5A66"></div></div>
+<div class="msg">{{SUB}}</div>
+<div class="ft">样本：100只股票代码；GOOG与GOOGL分别计数。<br>来源：原表 numbers 工作表 · S&amp;P 500名单样本 · 价格涨跌（Yahoo Finance 拆股调整收盘价），不含分红</div>
+</body></html>

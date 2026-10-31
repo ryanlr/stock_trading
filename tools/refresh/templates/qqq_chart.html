@@ -1,0 +1,61 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1688px;height:932px;background:#fff;font-family:"Inter","Noto Sans CJK SC",sans-serif;overflow:hidden}
+svg text{font-family:"Inter","Noto Sans CJK SC",sans-serif}
+</style></head><body><svg id="s" width="1688" height="932" viewBox="0 0 1688 932"></svg>
+<script>
+const BARS={{BARS}}, SEG={{SEG}}, LAYOUT="{{LAYOUT}}", LAST="{{LAST}}";
+const W=1688,H=932,L=0,R=1620,T=40,PB=690,VT=720,VB=900;
+const lo=Math.log(55),hi=Math.log(1150);
+const N=BARS.length, step=(R-10)/N;
+const X=i=>10+step*(i+0.5), Y=v=>T+(PB-T)*(hi-Math.log(v))/(hi-lo);
+const idx=d=>{let k=0;for(let i=0;i<N;i++){if(BARS[i][0]<=d)k=i;else break}return k};
+let s='';
+// grid + right axis
+[55.5,61.5,68,75,83,93,103,115.5,128,144,160,180,200,220,250,280,310,350,390,430,490,550,610,685,750,840].forEach(v=>{
+  s+=`<line x1="0" x2="${R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#F0F2F5"/><text x="${R+8}" y="${Y(v)+4}" font-size="12" fill="#3A4250">${v.toFixed(2)}</text>`});
+let py='';BARS.forEach((b,i)=>{const y=b[0].slice(0,4),m=+b[0].slice(5,7);if(y!==py&&m<=1||(py===''&&i===0)){}
+});
+let lastY='',lastH='';BARS.forEach((b,i)=>{const yy=b[0].slice(0,4),mm=b[0].slice(5,7);
+  if(yy!==lastY){lastY=yy;if(i>0){s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${T}" y2="${VB}" stroke="#F0F2F5"/><text x="${X(i)}" y="${H-12}" text-anchor="middle" font-size="13" font-weight="600" fill="#1E2430">${yy}</text>`}}
+  const key=yy+(mm>='07'?'b':'a');if(mm==='07'&&key!==lastH){lastH=key;s+=`<text x="${X(i)}" y="${H-12}" text-anchor="middle" font-size="12" fill="#3A4250">Jul</text>`}});
+// volume
+const vmax=Math.max(...BARS.map(b=>b[5]));
+BARS.forEach((b,i)=>{const up=b[4]>=b[1];const h=(VB-VT)*b[5]/vmax;s+=`<rect x="${X(i)-step*0.35}" y="${VB-h}" width="${step*0.7}" height="${h}" fill="${up?'#26A69A':'#EF5350'}" opacity=".45"/>`});
+// candles
+BARS.forEach((b,i)=>{const up=b[4]>=b[1],c=up?'#26A69A':'#EF5350';const y1=Y(Math.max(b[1],b[4])),y2=Y(Math.min(b[1],b[4]));
+  s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${Y(b[2])}" y2="${Y(b[3])}" stroke="${c}" stroke-width="1"/><rect x="${X(i)-step*0.36}" y="${y1}" width="${step*0.72}" height="${Math.max(1,y2-y1)}" fill="${c}"/>`});
+// last price tag
+const lc=BARS[N-1][4];
+s+=`<line x1="0" x2="${R}" y1="${Y(lc)}" y2="${Y(lc)}" stroke="#26A69A" stroke-dasharray="1 3"/><rect x="${R}" y="${Y(lc)-10}" width="56" height="20" fill="${BARS[N-1][4]>=BARS[N-1][1]?'#26A69A':'#EF5350'}"/><text x="${R+28}" y="${Y(lc)+5}" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">${lc.toFixed(2)}</text>`;
+// header
+s+=`<text x="14" y="22" font-size="15" fill="#1E2430" font-weight="600">QQQ · 周线 · 美元 · 截至 ${LAST}</text><text x="${R+8}" y="22" font-size="13" fill="#3A4250">USD</text>`;
+// segments
+const box=(x,y,w,sg)=>{const c=sg.c;return `<rect x="${x}" y="${y}" width="${w}" height="186" rx="8" fill="#fff" stroke="${c}" stroke-width="3"/><rect x="${x}" y="${y}" width="${w}" height="46" rx="8" fill="${c}"/><rect x="${x}" y="${y+30}" width="${w}" height="16" fill="${c}"/>
+<text x="${x+w/2}" y="${y+33}" text-anchor="middle" font-size="26" font-weight="700" fill="#fff">${sg.a.replace('-','年')}月 → ${sg.b.replace('-','年')}月</text>
+<text x="${x+w/2}" y="${y+86}" text-anchor="middle" font-size="31" font-weight="700" fill="#111">$${sg.p0.toFixed(2)} → $${sg.p1.toFixed(2)}</text>
+<text x="${x+w/2}" y="${y+146}" text-anchor="middle" font-size="62" font-weight="800" fill="${c}">${sg.r}</text>
+<text x="${x+w/2}" y="${y+176}" text-anchor="middle" font-size="23" font-weight="700" fill="#111">${sg.note}</text>`};
+const lab=(x,y,t1,t2,c,anchor='middle')=>`<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="19" font-weight="700" fill="${c}">${t1}</text><text x="${x}" y="${y+21}" text-anchor="${anchor}" font-size="19" font-weight="700" fill="${c}">${t2}</text>`;
+const pos=[{x:184,y:100,w:370},{x:912,y:410,w:338},{x:1272,y:410,w:338}];
+SEG.forEach((sg,k)=>{const ia=idx(sg.ad),ib=idx(sg.bd),xa=X(ia),xb=X(ib),c=sg.c,ya=Y(sg.p0),yb=Y(sg.p1);
+  s+=box(pos[k].x,pos[k].y,pos[k].w,sg);
+  if(LAYOUT==='points'){
+    const yl=Math.min(ya,yb)-(k===0?0:0);
+    s+=`<line x1="${xa}" x2="${xa}" y1="${ya-60}" y2="${PB-15}" stroke="${c}" stroke-width="2" stroke-dasharray="6 5"/><line x1="${xb}" x2="${xb}" y1="${yb-60}" y2="${PB-15}" stroke="${c}" stroke-width="2" stroke-dasharray="6 5"/>`;
+    const yArrow=k===0?Y(sg.p1)-4:(k===1?Y(sg.p1)-4:Y(Math.max(sg.p0,sg.p1))-44);
+    s+=`<line x1="${xa+8}" x2="${xb-8}" y1="${yArrow}" y2="${yArrow}" stroke="${c}" stroke-width="4"/><path d="M${xa+4},${yArrow} l12,-7 v14 z M${xb-4},${yArrow} l-12,-7 v14 z" fill="${c}"/>`;
+    s+=`<circle cx="${xa}" cy="${ya}" r="8" fill="${c}"/><circle cx="${xb}" cy="${yb}" r="8" fill="${c}"/>`;
+    if(k===0){s+=lab(xa-12,ya+34,sg.a,'$'+sg.p0.toFixed(2),c,'end');s+=lab(xb+10,yb-70,sg.b,'$'+sg.p1.toFixed(2),c);}
+    else if(k===1){s+=lab(xa,ya-92,sg.a,'$'+sg.p0.toFixed(2),c);s+=lab(xb-14,yb-44,sg.b,'$'+sg.p1.toFixed(2),c,'end');}
+    else{s+=lab(xa-10,Y(Math.max(sg.p0,sg.p1))-112,sg.a,'$'+sg.p0.toFixed(2),c,'end');s+=lab(xb-8,Y(Math.max(sg.p0,sg.p1))-112,sg.b,'$'+sg.p1.toFixed(2),c,'end');}
+  }else{
+    const yb2=k===0?620:648;
+    s+=`<line x1="${xa}" x2="${xa}" y1="${yb2-40}" y2="${yb2+20}" stroke="${c}" stroke-width="2" stroke-dasharray="6 5"/><line x1="${xb}" x2="${xb}" y1="${yb2-40}" y2="${yb2+20}" stroke="${c}" stroke-width="2" stroke-dasharray="6 5"/>`;
+    s+=`<line x1="${xa+8}" x2="${xb-8}" y1="${yb2}" y2="${yb2}" stroke="${c}" stroke-width="4"/><path d="M${xa+4},${yb2} l12,-7 v14 z M${xb-4},${yb2} l-12,-7 v14 z" fill="${c}"/>`;
+    s+=`<text x="${xa}" y="${yb2+42}" text-anchor="middle" font-size="18" font-weight="700" fill="${c}">${sg.a}</text><text x="${xb>R-60?xb+4:xb}" y="${yb2+42}" text-anchor="${xb>R-60?'end':'middle'}" font-size="18" font-weight="700" fill="${c}">${sg.b}</text>`;
+  }});
+s+=`<text x="32" y="728" font-size="17" fill="#1E2430">QQQ跟踪纳斯达克100；美元价格、不含分红。标注按核实的历史收盘价计算，周线来自 Yahoo Finance。</text>`;
+s+=`<text x="32" y="754" font-size="17" fill="#1E2430">计算终点：2021-11-17、2025-11-21、${LAST}；前两段起点为11月均价。</text>`;
+document.getElementById('s').innerHTML=s;
+</script></body></html>
