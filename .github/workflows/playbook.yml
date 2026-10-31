@@ -22,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -34,11 +36,13 @@ jobs:
             --out prediction.html \
             --data-dir skills/market-risk-playbook/data \
             --json skills/market-risk-playbook/data/latest.json
+      - name: Stamp update dates
+        run: python tools/stamp_dates.py
       - name: Commit if changed
         run: |
           git config user.name "playbook-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add prediction.html skills/market-risk-playbook/data
+          git add -A '*.html' skills/market-risk-playbook/data
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git commit -m "Update prediction.html ($(python -c "import json;print(json.load(open('skills/market-risk-playbook/data/latest.json'))['date'])"))"
           git pull --rebase origin main

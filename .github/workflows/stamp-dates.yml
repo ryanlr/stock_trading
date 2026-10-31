@@ -1,0 +1,35 @@
+name: Stamp update dates
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.html", "tools/stamp_dates.py", ".github/workflows/stamp-dates.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stamp-dates
+  cancel-in-progress: false
+
+jobs:
+  stamp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python tools/stamp_dates.py
+      - name: Commit if changed
+        run: |
+          git config user.name "stamp-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A '*.html'
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git commit -m "Stamp update dates"
+          git pull --rebase origin main
+          git push
