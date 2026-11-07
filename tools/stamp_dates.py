@@ -91,7 +91,8 @@ def stamp_index(text: str, dates: dict[str, dt.date], latest: dt.date) -> str:
 
 
 def main() -> None:
-    pages = [p for p in git("ls-files", "*.html").split() if os.path.exists(p)]
+    pages = [p for p in git("ls-files", "*.html").split()
+             if os.path.exists(p) and not p.startswith(("tools/", "skills/", ".github/"))]
     dates = {p: content_date(p) for p in pages}
     latest = max(dates.values())
     changed = []
