@@ -101,6 +101,7 @@ def update_event_page(path, events_key, header_pat, header_rep):
     data["px"] = px
     s = s[:a] + json.dumps(data, ensure_ascii=False) + s[b:]
     s = sub1(s, header_pat, header_rep, path + " header")
+    s = re.sub(r"(\{a:'2026-11-03',b:')\d{4}-\d{2}-\d{2}(',t:'中期选举')", rf"\g<1>{LASTS}\g<2>", s)
     wr(path, s)
     return len(px)
 
@@ -116,8 +117,10 @@ def trump_and_bessent():
     n2 = update_event_page("reports/trump_and_stock/bessent.html", "ev",
                            r"(2025-01-28 上任 → )\d{4}-\d{2}-\d{2}( · QQQ 日收盘价)", rf"\g<1>{LASTS}\g<2>")
     s = rd("reports/trump_and_stock/index.html")
-    s = sub1(s, r"(?:数据|QQQ价格)截至\d{4}-\d{2}-\d{2}收盘(?:；发言整理截至[\d-]+)?",
-             f"QQQ价格截至{LASTS}收盘；发言整理截至2026-10-09", "trump index foot")
+    s, n = re.subn(r"特朗普页：QQQ价格与发言截至[\d-]+；贝森特页：QQQ价格与发言截至[\d-]+",
+                   f"两页QQQ价格截至{LASTS}；发言整理截至{LASTS}", s)
+    if not n:
+        s = sub1(s, r"两页QQQ价格截至[\d-]+；发言整理截至[\d-]+", f"两页QQQ价格截至{LASTS}；发言整理截至{LASTS}", "trump index foot")
     wr("reports/trump_and_stock/index.html", s)
     SUMMARY["trump_px"], SUMMARY["bessent_px"] = n1, n2
 
